@@ -11,8 +11,8 @@ public class Fettucine extends OpMode
 {
     // Initialization
     FettucineHardware hardware;
-    final double FAST_SPEED = .8;
-    final double SLOW_SPEED = .5;
+    final double FAST_SPEED = .75;
+    final double SLOW_SPEED = .25;
     double slowConstant = FAST_SPEED;
     ElapsedTime armTime = null;
     ElapsedTime buttonTime = null;
@@ -37,7 +37,7 @@ public class Fettucine extends OpMode
     {
         drive();
         lift();
-
+        arm();
     }
 
     private void drive()
@@ -106,16 +106,61 @@ public class Fettucine extends OpMode
     {
         if (gamepad2.dpad_up)
         {
-            hardware.liftMotorOne.setPower(.3);
+            hardware.liftMotorOne.setPower(1); //sid was here
+            hardware.liftMotorTwo.setPower(.905);
         }
 
         else if (gamepad2.dpad_down)
         {
-            hardware.liftMotorOne.setPower(-.3);
+            hardware.liftMotorOne.setPower(-1);
+            hardware.liftMotorTwo.setPower(-.905); //sid was here
         }
         else
         {
-            hardware.liftMotorOne.setPower(0);
+            hardware.liftMotorOne.setPower(-gamepad2.left_stick_y * 0.5);
+            hardware.liftMotorTwo.setPower(-gamepad2.right_stick_y * 0.5); //sid was here
+        }
+    }
+
+    public void arm()
+    {
+        if (gamepad2.triangle)
+        {
+            hardware.armServoOne.setPower(1);
+        }
+        else if (gamepad2.cross)
+        {
+            hardware.armServoOne.setPower(-1); //sid was here
+        }
+        else
+        {
+            hardware.armServoOne.setPower(0.0);   //sid was here
+        }
+
+        if (gamepad2.right_bumper)
+        {
+            hardware.armServoTwo.setPower(1);
+        }
+        else if (gamepad2.left_bumper)
+        {
+            hardware.armServoTwo.setPower(-1);
+        }
+        else
+        {
+            hardware.armServoTwo.setPower(0.0); // sid was here lolz
+        }
+
+        if(gamepad2.right_trigger > 0.3)
+        {
+            hardware.armMotorOne.setPower(1);
+        }
+        else if (gamepad2.left_trigger > 0.3)
+        {
+            hardware.armMotorOne.setPower(-1);
+        }
+        else
+        {
+            hardware.armMotorOne.setPower(0);
         }
     }
 }

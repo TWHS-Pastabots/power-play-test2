@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team16909.hardware;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +16,9 @@ public class FettucineHardware
     public DcMotorEx rightRear = null;
     public DcMotorEx liftMotorOne = null;
     public DcMotorEx liftMotorTwo = null;
+    public DcMotorEx armMotorOne = null;
+    public CRServo armServoOne = null;
+    public CRServo armServoTwo = null;
     public DcMotorEx[] driveMotors;
     public DcMotorEx[] liftMotors;
 
@@ -23,6 +27,7 @@ public class FettucineHardware
         Assert.assertNotNull(hardwareMap);
         initializeDriveMotors(hardwareMap);
         initializeLiftMotors(hardwareMap);
+        initializeArmMotors(hardwareMap);
     }
 
     public void initializeDriveMotors(HardwareMap hardwareMap) {
@@ -51,9 +56,10 @@ public class FettucineHardware
         liftMotorTwo = hardwareMap.get(DcMotorEx.class, FettucineIds.LIFT_MOTOR_TWO);
 
         liftMotorOne.setDirection(DcMotorSimple.Direction.FORWARD);
+        liftMotorTwo.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        liftMotors = new DcMotorEx[] {liftMotorOne, liftMotorOne};
+        liftMotors = new DcMotorEx[] {liftMotorOne, liftMotorTwo};
 
         for (DcMotorEx motor : liftMotors)
         {
@@ -61,5 +67,20 @@ public class FettucineHardware
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
+    }
+
+    public void initializeArmMotors (HardwareMap hardwareMap)
+    {
+        armMotorOne = hardwareMap.get(DcMotorEx.class, FettucineIds.ARM_MOTOR_ONE);
+        armMotorOne.setDirection(DcMotorSimple.Direction.FORWARD);
+        armMotorOne.setPower(0.0);
+        armMotorOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotorOne.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        armServoOne = hardwareMap.get(CRServo.class, FettucineIds.ARM_SERVO_ONE);
+        armServoTwo = hardwareMap.get(CRServo.class, FettucineIds.ARM_SERVO_TWO);
+
+        armServoOne.resetDeviceConfigurationForOpMode();
+        armServoTwo.resetDeviceConfigurationForOpMode();
     }
 }
