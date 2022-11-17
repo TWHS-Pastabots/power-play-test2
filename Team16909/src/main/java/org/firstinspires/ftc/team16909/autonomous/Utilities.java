@@ -10,9 +10,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Utilities
 {
     FettucineHardware hardware;
-    public Utilities(HardwareMap hardwareMap)
+    public Utilities(FettucineHardware hardware)
     {
-        hardware.init(hardwareMap);
+        this.hardware = hardware;
         resetEncoderModes(hardware);
     }
 
@@ -20,49 +20,73 @@ public class Utilities
     {
         for (DcMotorEx motor : hardware.driveMotors)
         {
-            motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         }
 
         for (DcMotorEx motor : hardware.liftMotors)
         {
-            motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         }
-        hardware.armMotorOne.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
         hardware.armMotorOne.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 
-    public void setLiftPos(int pos)
+    public void moveLift(int position)
     {
-        for (DcMotorEx motor : hardware.liftMotors)
+        hardware.liftMotorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.liftMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        hardware.liftMotorOne.setTargetPosition(hardware.liftMotorOne.getCurrentPosition() + position);
+        hardware.liftMotorTwo.setTargetPosition(hardware.liftMotorTwo.getCurrentPosition() + position);
+
+        hardware.liftMotorOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.liftMotorTwo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        hardware.liftMotorOne.setPower(1);
+        hardware.liftMotorTwo.setPower(1);
+
+    }
+
+    public void moveArm(int position)
+    {
+        hardware.armMotorOne.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        hardware.armMotorOne.setTargetPosition(hardware.armMotorOne.getCurrentPosition() + position);
+        hardware.armMotorOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.armMotorOne.setPower(.75);
+
+    }
+
+    public void wait(int millis, Telemetry telemetry)
+    {
+        ElapsedTime waitTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (waitTime.time() < millis)
         {
-            motor.setTargetPosition(pos);
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motor.setPower(1.0);
+            telemetry.addData("Status", "Waiting");
+            telemetry.addData("Time Left", "" + (millis - waitTime.time()));
+            telemetry.update();
         }
     }
 
-    public void intake()
+    public void wait(int millis)
     {
-        hardware.armServoTwo.setPower(-1);
-    }
-
-    public void stopGrabber()
-    {
-        hardware.armServoTwo.setPower(0);
+        ElapsedTime waitTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (waitTime.time() < millis)
+        {
+            continue;
+        }
     }
 
     public void outtake()
     {
         hardware.armServoTwo.setPower(1);
+        this.wait(1000);
+        hardware.armServoTwo.setPower(0);
     }
 
-    public void setArmPos(int pos)
+    public void intake()
     {
-        hardware.armMotorOne.setTargetPosition(pos);
-        hardware.armMotorOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.armServoTwo.setPower(-1);
+        this.wait(1000);
+        hardware.armServoTwo.setPower(0);
     }
-
-
 }

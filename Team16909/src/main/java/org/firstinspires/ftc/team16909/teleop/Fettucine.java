@@ -45,7 +45,7 @@ public class Fettucine extends OpMode
         // Mecanum drivecode
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x; // Counteract imperfect strafing
-        double rx = gamepad1.right_stick_x;
+        double rx = -gamepad1.right_stick_x;
 
         double leftFrontPower = y + x + rx;
         double leftRearPower = y - x + rx;
@@ -70,20 +70,34 @@ public class Fettucine extends OpMode
             rightRearPower /= max;
         }
 
-        /*if (gamepad1.dpad_up || gamepad1.dpad_right)
+        if (gamepad1.dpad_up)
+        {
+            leftFrontPower = slowConstant;
+            rightRearPower = slowConstant;
+            rightFrontPower = slowConstant;
+            leftRearPower = slowConstant;
+        }
+        else if (gamepad1.dpad_down)
+        {
+            leftFrontPower = -slowConstant;
+            rightRearPower = -slowConstant;
+            rightFrontPower = -slowConstant;
+            leftRearPower = -slowConstant;
+        }
+        else if (gamepad1.dpad_left)
         {
             leftFrontPower = -1;
             rightRearPower = -1;
             rightFrontPower = 1;
             leftRearPower = 1;
         }
-        else if (gamepad1.dpad_down || gamepad1.dpad_left)
+        else if (gamepad1.dpad_right)
         {
             leftFrontPower = 1;
             rightRearPower = 1;
             rightFrontPower = -1;
             leftRearPower = -1;
-        }*/
+        }
 
         if (gamepad1.square && slowConstant == FAST_SPEED && buttonTime.time() >= 500)
         {
@@ -104,13 +118,13 @@ public class Fettucine extends OpMode
 
     public void lift()
     {
-        if (gamepad1.dpad_up)
+        if (gamepad2.dpad_up)
         {
             hardware.liftMotorOne.setPower(1); //sid was here
             hardware.liftMotorTwo.setPower(.905);
         }
 
-        else if (gamepad1.dpad_down)
+        else if (gamepad2.dpad_down)
         {
             hardware.liftMotorOne.setPower(-1);
             hardware.liftMotorTwo.setPower(-.905); //sid was here
@@ -150,14 +164,14 @@ public class Fettucine extends OpMode
             hardware.armServoTwo.setPower(0.0); // sid was here lolz
         }
 
-        if(gamepad2.right_trigger > 0.3) //going from front to back
+        if(gamepad2.right_trigger > 0.0) //going from front to back
         {
-            hardware.armMotorOne.setPower(1);
+            hardware.armMotorOne.setPower(gamepad2.right_trigger);
             hardware.armServoTwo.setPower(-0.1);
         }
-        else if (gamepad2.left_trigger > 0.3) //going from back to front
+        else if (gamepad2.left_trigger > 0.0) //going from back to front
         {
-            hardware.armMotorOne.setPower(-1);
+            hardware.armMotorOne.setPower(-gamepad2.left_trigger);
             hardware.armServoTwo.setPower(-0.1);
         }
         else
