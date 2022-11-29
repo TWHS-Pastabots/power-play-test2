@@ -15,9 +15,18 @@ public class ColorDetectionPipeline extends OpenCvPipeline
     int height = 50;
     Point TOP_LEFT_BOUND = new Point(100,100);
     Point BOTTOM_RIGHT_BOUND = new Point(TOP_LEFT_BOUND.x + width, TOP_LEFT_BOUND.y + height);
-    int pos1;
-    int pos2;
-    int pos3;
+    int lavender = 148;
+    int darkGreen = 62;
+    int lightBlue = 92;
+    int[] cols = {lavender, darkGreen, lightBlue};
+    public enum color
+    {
+        LAVENDER,
+        DARKGREEN,
+        LIGHTBLUE
+    }
+
+    private volatile color chosenColor;
 
     @Override
     public Mat processFrame(Mat input)
@@ -25,10 +34,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline
         Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-        int lavender = 148;
-        int darkGreen = 62;
-        int lightBlue = 92;
-        int[] cols = {lavender, darkGreen, lightBlue};
+
         if(mat.empty())
         {
             return input;
@@ -47,12 +53,31 @@ public class ColorDetectionPipeline extends OpenCvPipeline
             if (Math.abs(col - meanCol) < Math.abs(closestCol - meanCol))
             {
                 closestCol = col;
+
+                if (col == lavender)
+                {
+                    chosenColor = color.LAVENDER;
+                }
+
+                else if (col == darkGreen)
+                {
+                    chosenColor = color.DARKGREEN;
+                }
+
+                if (col == lightBlue)
+                {
+                    chosenColor = color.LIGHTBLUE;
+                }
             }
         }
 
         Imgproc.rectangle(input, window, new Scalar(closestCol, 39, 100));
 
+        return input;
+    }
 
-        return null;
+    public color getChosenColor()
+    {
+        return chosenColor;
     }
 }

@@ -18,13 +18,11 @@ public class HighJunction extends LinearOpMode
 {
     private SampleMecanumDrive drive;
     private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
-    //private Pose2d rightToMiddle = new Pose2d(-24, 34, Math.toRadians(-90));
-    //private Pose2d rightJunction = new Pose2d(4, 34, Math.toRadians(-90));
 
-    int liftPos1 = 3897;
-    int armPos1 = 18;
+    int liftPos1 = 3500; //3897
+    int armPos1 = 100;
 
-    private TrajectorySequence traj1, traj2;
+    private TrajectorySequence traj1, finalTraj, endTraj1, endTraj2, endTraj3;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -37,7 +35,7 @@ public class HighJunction extends LinearOpMode
         hardware.leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         hardware.rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         hardware.rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-        hardware.armMotorOne.setDirection(DcMotorSimple.Direction.FORWARD);
+        hardware.armMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         Utilities utilities = new Utilities(hardware);
@@ -50,6 +48,23 @@ public class HighJunction extends LinearOpMode
 
         utilities.intake();
 
+        /*ColorDetectionPipeline pipeline = new ColorDetectionPipeline();
+
+        if (pipeline.getChosenColor().equals(ColorDetectionPipeline.color.LAVENDER))
+        {
+            finalTraj = endTraj1;
+        }
+
+        if (pipeline.getChosenColor().equals(ColorDetectionPipeline.color.DARKGREEN))
+        {
+            finalTraj = endTraj2;
+        }
+        if (pipeline.getChosenColor().equals(ColorDetectionPipeline.color.LIGHTBLUE))
+        {
+            finalTraj = endTraj3;
+        }
+        */
+
         waitForStart();
 
         if (!opModeIsActive())
@@ -57,11 +72,11 @@ public class HighJunction extends LinearOpMode
             return;
         }
 
-        //utilities.moveArm(armPos1);
-        //utilities.wait(5000);
+        utilities.moveArm(armPos1);
+        utilities.wait(5000);
 
-        //utilities.moveLift(liftPos1);
-        //utilities.wait(5000);
+        utilities.moveLift(liftPos1);
+        utilities.wait(5000);
 
         drive.followTrajectorySequence(traj1);
 
