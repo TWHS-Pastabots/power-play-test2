@@ -79,13 +79,13 @@ public class HighJunction extends LinearOpMode
                 .waitSeconds(1)
                 .turn(Math.toRadians(90))
                 .waitSeconds(1)
-                .forward(13)
+                .forward(4)
                 .waitSeconds(1)
                 .turn(Math.toRadians(-90))
                 .waitSeconds(1)
-                .forward(20)
+                .forward(4)
                 .waitSeconds(1)
-                .turn(Math.toRadians(32))
+                .turn(Math.toRadians(40))
                 .build();
     }
 }
