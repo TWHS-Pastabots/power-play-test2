@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.team15021.auton;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.team15021.hardware.RavioliHardware;
 
 public class util
@@ -83,20 +86,22 @@ public class util
         ravioliHardware.servo1.setPosition(1);
     }
 
-    public void tiltUp() { ravioliHardware.servo0.setPosition(1); }
+    public void tiltDown() { ravioliHardware.servo0.setPosition(1); }
 
-    public void tiltDown()
-    {
-        ravioliHardware.servo0.setPosition(0);
-    }
+    public void tiltUp() { ravioliHardware.servo0.setPosition(.4); }
+
+    public void resetClaw() {ravioliHardware.servo0.scaleRange(0,1);}
 
 
-    public void wait(int waitTime)
+    public void wait(int waitTime, Telemetry tele)
     {
         ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
         while (time.time() < waitTime)
         {
+            tele.addData("Time Left", (waitTime-time.time())/1000.0 );
+            tele.addData("Time Limit", waitTime/1000);
+            tele.update();
             continue;
         }
     }
