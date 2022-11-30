@@ -10,9 +10,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Utilities
 {
     FettucineHardware hardware;
-    public Utilities(HardwareMap hardwareMap)
+    public Utilities(FettucineHardware hardware)
     {
-        hardware.init(hardwareMap);
+        this.hardware = hardware;
         resetEncoderModes(hardware);
     }
 
@@ -29,5 +29,64 @@ public class Utilities
         }
 
         hardware.armMotorOne.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void moveLift(int position)
+    {
+        hardware.liftMotorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.liftMotorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        hardware.liftMotorOne.setTargetPosition(hardware.liftMotorOne.getCurrentPosition() + position);
+        hardware.liftMotorTwo.setTargetPosition(hardware.liftMotorTwo.getCurrentPosition() + position);
+
+        hardware.liftMotorOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.liftMotorTwo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        hardware.liftMotorOne.setPower(1);
+        hardware.liftMotorTwo.setPower(1);
+
+    }
+
+    public void moveArm(int position)
+    {
+        hardware.armMotorOne.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        hardware.armMotorOne.setTargetPosition(hardware.armMotorOne.getCurrentPosition() + position);
+        hardware.armMotorOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.armMotorOne.setPower(.75);
+
+    }
+
+    public void wait(int millis, Telemetry telemetry)
+    {
+        ElapsedTime waitTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (waitTime.time() < millis)
+        {
+            telemetry.addData("Status", "Waiting");
+            telemetry.addData("Time Left", "" + (millis - waitTime.time()));
+            telemetry.update();
+        }
+    }
+
+    public void wait(int millis)
+    {
+        ElapsedTime waitTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        while (waitTime.time() < millis)
+        {
+            continue;
+        }
+    }
+
+    public void outtake()
+    {
+        hardware.armServoTwo.setPower(1);
+        this.wait(1000);
+        hardware.armServoTwo.setPower(0);
+    }
+
+    public void intake()
+    {
+        hardware.armServoTwo.setPower(-1);
+        this.wait(1000);
+        hardware.armServoTwo.setPower(0);
     }
 }
