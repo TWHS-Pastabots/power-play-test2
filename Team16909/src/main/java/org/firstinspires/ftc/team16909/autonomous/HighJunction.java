@@ -20,7 +20,7 @@ public class HighJunction extends LinearOpMode
     private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
 
     int liftPos1 = 3500; //3897
-    int armPos1 = 100;
+    int armPos1 = 250;
 
     private TrajectorySequence traj1, finalTraj, endTraj1, endTraj2, endTraj3;
 
@@ -89,18 +89,18 @@ public class HighJunction extends LinearOpMode
 
     public void buildTrajectories()
     {
-        traj1 = drive.trajectorySequenceBuilder(rightStart)
+        traj1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .forward(4)
                 .waitSeconds(1)
                 .turn(Math.toRadians(90))
                 .waitSeconds(1)
-                .forward(4)
+                .forward(24)
                 .waitSeconds(1)
                 .turn(Math.toRadians(-90))
                 .waitSeconds(1)
-                .forward(4)
+                .forward(28)
                 .waitSeconds(1)
-                .turn(Math.toRadians(40))
+                .turn(Math.toRadians(70))
                 .build();
     }
 }
