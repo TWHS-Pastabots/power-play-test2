@@ -105,34 +105,37 @@ public class HighJunction extends LinearOpMode
         }
 
         utilities.moveArm(armPos1);
-        utilities.wait(5000);
+        utilities.wait(500);
 
         utilities.moveLift(liftPos1);
-        utilities.wait(5000);
+        utilities.wait(500);
 
         drive.followTrajectorySequence(traj1);
 
-        utilities.wait(1000);
+        utilities.wait(500);
 
-        utilities.wait(500, telemetry);
+        //utilities.wait(500, telemetry);
 
         utilities.outtake();
+        utilities.wait(700);
+        utilities.moveArm(0);
     }
 
     public void buildTrajectories()
     {
-        traj1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        traj1 = drive.trajectorySequenceBuilder(rightStart)
+                .forward(25)
+                .waitSeconds(.05)
+                .turn(Math.toRadians(90))
+                .waitSeconds(.05)
+                .forward(24)
+                .waitSeconds(.05)
+                .turn(Math.toRadians(-45))
+                .waitSeconds(.05)
                 .forward(4)
                 .waitSeconds(1)
-                .turn(Math.toRadians(90))
-                .waitSeconds(1)
-                .forward(24)
-                .waitSeconds(1)
-                .turn(Math.toRadians(-90))
-                .waitSeconds(1)
-                .forward(28)
-                .waitSeconds(1)
-                .turn(Math.toRadians(70))
+                .forward(-4)
+                .turn(Math.toRadians(-45))
                 .build();
     }
 }
