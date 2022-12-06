@@ -13,11 +13,11 @@ public class ColorDetectionPipeline extends OpenCvPipeline
 
     int width = 50;
     int height = 50;
-    Point TOP_LEFT_BOUND = new Point(100,100);
+    Point TOP_LEFT_BOUND = new Point(50,50);
     Point BOTTOM_RIGHT_BOUND = new Point(TOP_LEFT_BOUND.x + width, TOP_LEFT_BOUND.y + height);
-    int lavender = 148;
-    int darkGreen = 62;
-    int lightBlue = 92;
+    int lavender = 286; //(286, 78%, 78%)
+    int darkGreen = 62; //(123, 62%, 17%)
+    int lightBlue = 92; //(178, 43%, 90%)
     int[] cols = {lavender, darkGreen, lightBlue};
     public enum color
     {
@@ -32,7 +32,10 @@ public class ColorDetectionPipeline extends OpenCvPipeline
     public Mat processFrame(Mat input)
     {
         Mat mat = new Mat();
+        Mat hue = new Mat();
+
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+        Core.extractChannel(mat, hue, 0);
 
 
         if(mat.empty())
@@ -64,14 +67,14 @@ public class ColorDetectionPipeline extends OpenCvPipeline
                     chosenColor = color.DARKGREEN;
                 }
 
-                if (col == lightBlue)
+                else if (col == lightBlue)
                 {
                     chosenColor = color.LIGHTBLUE;
                 }
             }
         }
 
-        Imgproc.rectangle(input, window, new Scalar(closestCol, 39, 100));
+        Imgproc.rectangle(input, window, new Scalar(closestCol, 39, 5));
 
         return input;
     }

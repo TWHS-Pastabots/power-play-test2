@@ -16,15 +16,15 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name = "HighJunction")
+@Autonomous(name = "HighJunctionLeft")
 
-public class HighJunction extends LinearOpMode
+public class HighJunctionLeft extends LinearOpMode
 {
     private SampleMecanumDrive drive;
     private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
 
     int liftPos1 = 3500; //3897
-    int armPos1 = 300;
+    int armPos1 = 250;
 
     private TrajectorySequence traj1, finalTraj, endTraj1, endTraj2, endTraj3;
 
@@ -104,28 +104,25 @@ public class HighJunction extends LinearOpMode
             return;
         }
 
+        utilities.moveArm(armPos1);
         utilities.wait(500);
 
         utilities.moveLift(liftPos1);
-        utilities.wait(2500);
-
+        utilities.wait(500);
 
         drive.followTrajectorySequence(traj1);
 
-        utilities.wait(500);
+        utilities.wait(50);
 
-        utilities.moveArm(armPos1);
-
-
-        utilities.wait(1500);
+        //utilities.wait(500, telemetry);
 
         utilities.outtake();
 
         utilities.wait(100);
 
-
         drive.followTrajectorySequence(endTraj1);
 
+        utilities.moveArm(0);
     }
 
     public void buildTrajectories()
@@ -139,14 +136,15 @@ public class HighJunction extends LinearOpMode
                 .waitSeconds(.05)
                 .turn(Math.toRadians(-45))
                 .waitSeconds(.05)
-                .forward(6)
+                .forward(4)
                 .waitSeconds(1)
                 .build();
 
         endTraj1 = drive.trajectorySequenceBuilder(traj1.end())
-                .forward(-3)
-                .turn(Math.toRadians(42))
-                .forward(-24)
+                .forward(-4)
+                .turn(Math.toRadians(-45))
+                .strafeRight(20)
                 .build();
     }
 }
+

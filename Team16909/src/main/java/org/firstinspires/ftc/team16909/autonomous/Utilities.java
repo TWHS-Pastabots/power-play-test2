@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Utilities
 {
     FettucineHardware hardware;
+    ElapsedTime time = new ElapsedTime();
     public Utilities(FettucineHardware hardware)
     {
         this.hardware = hardware;
@@ -54,6 +55,10 @@ public class Utilities
         hardware.armMotorOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.armMotorOne.setPower(.75);
 
+        hardware.armServoOne.setPower(0.7);
+        wait((int)(position * 1.5));
+        hardware.armServoOne.setPower(0.0);
+
     }
 
     public void wait(int millis, Telemetry telemetry)
@@ -79,14 +84,14 @@ public class Utilities
     public void outtake()
     {
         hardware.armServoTwo.setPower(1);
-        this.wait(1000);
+        this.wait(2500);
         hardware.armServoTwo.setPower(0);
     }
 
     public void intake()
     {
         hardware.armServoTwo.setPower(-1);
-        this.wait(1000);
+        this.wait(2000);
         hardware.armServoTwo.setPower(0);
     }
 }
