@@ -43,7 +43,7 @@ public class HighJunction extends LinearOpMode
         hardware.armMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        /*int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         pipeline = new ColorDetectionPipeline();
         webcam.setPipeline(pipeline);
@@ -65,7 +65,7 @@ public class HighJunction extends LinearOpMode
                  // This will be called if the camera could not be opened
 
             }
-        });
+        });*/
 
 
 
@@ -76,7 +76,7 @@ public class HighJunction extends LinearOpMode
 
         drive.setPoseEstimate(rightStart);
 
-        while (!gamepad1.triangle)
+        /*while (!gamepad1.triangle)
         {
             telemetry.addData("Hue Value: ", pipeline.meanCol);
             telemetry.addData("Chosen Color: ", pipeline.getColor());
@@ -84,7 +84,7 @@ public class HighJunction extends LinearOpMode
             telemetry.update();
             utilities.wait(100);
             telemetry.clear();
-        }
+        }*/
 
         buildTrajectories();
 
@@ -107,29 +107,30 @@ public class HighJunction extends LinearOpMode
         drive.followTrajectorySequence(traj1);
 
         utilities.outtake();
-        utilities.moveLift(-armPos1);
+        utilities.moveLift(-liftPos1);
 
         drive.followTrajectorySequence(endTraj1);
 
+        utilities.moveArm(-armPos1);
     }
 
     public void buildTrajectories()
     {
         traj1 = drive.trajectorySequenceBuilder(rightStart)
                 .forward(27)
-                .waitSeconds(.05)
-                .turn(Math.toRadians(90))
-                .waitSeconds(.05)
+                //.waitSeconds(.05)
+                .turn(Math.toRadians(95))
+                //.waitSeconds(.05)
                 .forward(25)
-                .waitSeconds(.05)
+                //.waitSeconds(.05)
                 .turn(Math.toRadians(-45))
-                .waitSeconds(.05)
-                .forward(3)
-                .waitSeconds(1)
+                //.waitSeconds(.05)
+                //.forward(3)
+                //.waitSeconds(1)
                 .build();
 
         endTraj1 = drive.trajectorySequenceBuilder(traj1.end())
-                .forward(-4)
+                //.forward(-4)
                 .turn(Math.toRadians(45))
                 .forward(-24)
                 .build();
