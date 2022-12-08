@@ -13,74 +13,74 @@ public class ColorDetectionPipeline extends OpenCvPipeline
 
     int width = 50;
     int height = 50;
-    Point TOP_LEFT_BOUND = new Point(50,50);
+    Point TOP_LEFT_BOUND = new Point(150,100);
     Point BOTTOM_RIGHT_BOUND = new Point(TOP_LEFT_BOUND.x + width, TOP_LEFT_BOUND.y + height);
-    int lavender = 286; //(286, 78%, 78%)
-    int darkGreen = 62; //(123, 62%, 17%)
-    int lightBlue = 92; //(178, 43%, 90%)
+    Rect window = new Rect(TOP_LEFT_BOUND, BOTTOM_RIGHT_BOUND);
+    public int meanCol;
+    int [] colDistances = new int[3];
+    int lavender = 286; //(286, 78%, 78%) #de9bf3
+    int darkGreen = 62; //(123, 62%, 17%) #104613
+    int lightBlue = 92; //(178, 43%, 90%) #dbf0f0
     int[] cols = {lavender, darkGreen, lightBlue};
-    public enum color
+    String[] locations = {"left", "middle", "right"};
+    String[] colors = {"lavender", "darkGreen", "lightBlue"};
+    Scalar[] RGBCONVERSION = {new Scalar(222, 155, 243), new Scalar(16, 70, 19), new Scalar(219, 240, 240)};
+    Mat submat = new Mat();
+    Mat hsv = new Mat();
+
+
+    private volatile int parkPoint = 0;
+
+
+    public void init(Mat initFrame)
     {
-        LAVENDER,
-        DARKGREEN,
-        LIGHTBLUE
+        RGB2HSV(initFrame);
     }
 
-    private volatile color chosenColor;
+    public void RGB2HSV(Mat input)
+    {
+        submat = input.submat(window);
+        Imgproc.cvtColor(submat, hsv, Imgproc.COLOR_RGB2HSV);
+    }
 
     @Override
     public Mat processFrame(Mat input)
     {
-        Mat mat = new Mat();
-        Mat hue = new Mat();
+        RGB2HSV(input);
 
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-        Core.extractChannel(mat, hue, 0);
+        meanCol = (int) Core.mean(hsv).val[0];
 
 
-        if(mat.empty())
+        for (int i = 0; i < cols.length; i++)
         {
-            return input;
+            colDistances[i] = Math.abs(meanCol - cols[i]);
         }
 
-        Rect window = new Rect(TOP_LEFT_BOUND, BOTTOM_RIGHT_BOUND);
+        parkPoint = 0;
 
-        Mat submat = mat.submat(window);
-
-        int meanCol = (int) Core.mean(submat).val[0];
-        int closestCol = 999;
-
-
-        for(int col : cols)
+        for(int i = 1; i < colDistances.length; i++)
         {
-            if (Math.abs(col - meanCol) < Math.abs(closestCol - meanCol))
+            if (colDistances[i] < colDistances[parkPoint])
             {
-                closestCol = col;
-
-                if (col == lavender)
-                {
-                    chosenColor = color.LAVENDER;
-                }
-
-                else if (col == darkGreen)
-                {
-                    chosenColor = color.DARKGREEN;
-                }
-
-                else if (col == lightBlue)
-                {
-                    chosenColor = color.LIGHTBLUE;
-                }
+                parkPoint = i;
             }
         }
 
-        Imgproc.rectangle(input, window, new Scalar(closestCol, 39, 5));
+
+        Imgproc.rectangle(input, window, RGBCONVERSION[parkPoint], 5);
+
 
         return input;
+
     }
 
-    public color getChosenColor()
+    public String getParkPoint()
     {
-        return chosenColor;
+        return locations[parkPoint];
+    }
+
+    public String getColor()
+    {
+        return colors[parkPoint];
     }
 }
