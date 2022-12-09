@@ -11,20 +11,20 @@ import org.opencv.imgproc.Imgproc;
 public class ColorDetectionPipeline extends OpenCvPipeline
 {
 
-    int width = 50;
-    int height = 50;
-    Point TOP_LEFT_BOUND = new Point(200,100);
+    int width = 25;
+    int height = 25;
+    Point TOP_LEFT_BOUND = new Point(240,80);
     Point BOTTOM_RIGHT_BOUND = new Point(TOP_LEFT_BOUND.x + width, TOP_LEFT_BOUND.y + height);
     Rect window = new Rect(TOP_LEFT_BOUND, BOTTOM_RIGHT_BOUND);
     public int meanCol;
     int [] colDistances = new int[3];
-    int lavender = 286; //(286, 78%, 78%) #de9bf3
-    int darkGreen = 62; //(123, 62%, 17%) #104613
-    int lightBlue = 92; //(178, 43%, 90%) #dbf0f0
-    int[] cols = {lavender, darkGreen, lightBlue};
+    int yellow = 37; //(60, 100%, 50%) #de9bf3
+    int magenta = 160; //(300, 100%, 50%) #104613
+    int cyan = 103; //(180, 100%, 50%) #dbf0f0
+    int[] cols = {yellow, magenta, cyan};
     String[] locations = {"left", "middle", "right"};
-    String[] colors = {"lavender", "darkGreen", "lightBlue"};
-    Scalar[] RGBCONVERSION = {new Scalar(222, 155, 243), new Scalar(16, 70, 19), new Scalar(219, 240, 240)};
+    String[] colors = {"yellow", "magenta", "cyan"};
+    Scalar[] RGBCONVERSION = {new Scalar(255, 255, 0), new Scalar(255, 0, 255), new Scalar(0, 255, 255)};
     Mat submat = new Mat();
     Mat hsv = new Mat();
 

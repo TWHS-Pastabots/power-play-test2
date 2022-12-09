@@ -55,7 +55,6 @@ public class Utilities
         hardware.armMotorOne.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.armMotorOne.setPower(.75);
 
-        hardware.armServoOne.setPower(0.7);
         wait((int)(position * 1.5));
         hardware.armServoOne.setPower(0.0);
 
@@ -84,7 +83,7 @@ public class Utilities
     public void outtake()
     {
         hardware.armServoTwo.setPower(1);
-        this.wait(2500);
+        this.wait(2000);
         hardware.armServoTwo.setPower(0);
     }
 
@@ -93,5 +92,12 @@ public class Utilities
         hardware.armServoTwo.setPower(-1);
         this.wait(2000);
         hardware.armServoTwo.setPower(0);
+    }
+
+    public void moveHand(int ms, int dir)
+    {
+        hardware.armServoOne.setPower(1 * dir);
+        this.wait(ms);
+        hardware.armServoOne.setPower(0);
     }
 }

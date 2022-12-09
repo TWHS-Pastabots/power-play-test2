@@ -164,15 +164,15 @@ public class Fettucine extends OpMode
             hardware.armServoTwo.setPower(0.0); // sid was here lolz
         }
 
-        if(gamepad2.right_trigger > 0.0) //going from front to back
+        if(gamepad2.right_trigger > 0.0) //going from front to back (not purple to purple)
         {
             hardware.armMotorOne.setPower(gamepad2.right_trigger);
-            hardware.armServoTwo.setPower(-0.1);
+            //hardware.armServoTwo.setPower(-0.1);
         }
-        else if (gamepad2.left_trigger > 0.0) //going from back to front
+        else if (gamepad2.left_trigger > 0.0) //going from back to front (purple to not purple)
         {
             hardware.armMotorOne.setPower(-gamepad2.left_trigger);
-            hardware.armServoTwo.setPower(-0.1);
+            //hardware.armServoTwo.setPower(-0.1);
         }
         else
         {
