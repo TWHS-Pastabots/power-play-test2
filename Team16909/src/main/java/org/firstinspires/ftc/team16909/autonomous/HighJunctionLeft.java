@@ -1,27 +1,30 @@
 package org.firstinspires.ftc.team16909.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import org.firstinspires.ftc.team16909.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.team16909.hardware.FettucineHardware;
 import org.firstinspires.ftc.team16909.trajectorysequence.TrajectorySequence;
-
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name = "HighJunction")
+@Autonomous(name = "HighJunctionLeft")
 
-public class HighJunction extends LinearOpMode
+public class HighJunctionLeft extends LinearOpMode
 {
     private SampleMecanumDrive drive;
     private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
 
-    int liftPos1 = 2000; //3897
-    int armPos1 = 300;
+    int liftPos1 = 3500; //3897
+    int armPos1 = 250;
 
     private TrajectorySequence traj1, finalTraj, endTraj1, endTraj2, endTraj3;
 
@@ -42,8 +45,7 @@ public class HighJunction extends LinearOpMode
         hardware.rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
         hardware.armMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
-        /*int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         pipeline = new ColorDetectionPipeline();
         webcam.setPipeline(pipeline);
@@ -61,13 +63,11 @@ public class HighJunction extends LinearOpMode
             @Override
             public void onError(int errorCode)
             {
-
-                 // This will be called if the camera could not be opened
-
+                /*
+                 * This will be called if the camera could not be opened
+                 */
             }
-        });*/
-
-
+        });
 
 
         Utilities utilities = new Utilities(hardware);
@@ -76,20 +76,26 @@ public class HighJunction extends LinearOpMode
 
         drive.setPoseEstimate(rightStart);
 
-        /*while (!gamepad1.triangle)
-        {
-            telemetry.addData("Hue Value: ", pipeline.meanCol);
-            telemetry.addData("Chosen Color: ", pipeline.getColor());
-            telemetry.addData("Park Point: ", pipeline.getParkPoint());
-            telemetry.update();
-            utilities.wait(100);
-            telemetry.clear();
-        }*/
-
         buildTrajectories();
 
         utilities.intake();
 
+        /*ColorDetectionPipeline pipeline = new ColorDetectionPipeline();
+
+        if (pipeline.getChosenColor().equals(ColorDetectionPipeline.color.LAVENDER))
+        {
+            finalTraj = endTraj1;
+        }
+
+        if (pipeline.getChosenColor().equals(ColorDetectionPipeline.color.DARKGREEN))
+        {
+            finalTraj = endTraj2;
+        }
+        if (pipeline.getChosenColor().equals(ColorDetectionPipeline.color.LIGHTBLUE))
+        {
+            finalTraj = endTraj3;
+        }
+        */
 
         waitForStart();
 
@@ -98,41 +104,47 @@ public class HighJunction extends LinearOpMode
             return;
         }
 
-        //utilities.wait(500);
+        utilities.moveArm(armPos1);
+        utilities.wait(500);
 
         utilities.moveLift(liftPos1);
-        utilities.moveArm(armPos1);
-
+        utilities.wait(500);
 
         drive.followTrajectorySequence(traj1);
 
+        utilities.wait(50);
+
+        //utilities.wait(500, telemetry);
+
         utilities.outtake();
-        utilities.moveLift(-liftPos1);
+
+        utilities.wait(100);
 
         drive.followTrajectorySequence(endTraj1);
 
-        utilities.moveArm(-armPos1);
+        utilities.moveArm(0);
     }
 
     public void buildTrajectories()
     {
         traj1 = drive.trajectorySequenceBuilder(rightStart)
-                .forward(27)
-                //.waitSeconds(.05)
-                .turn(Math.toRadians(95))
-                //.waitSeconds(.05)
                 .forward(25)
-                //.waitSeconds(.05)
+                .waitSeconds(.05)
+                .turn(Math.toRadians(90))
+                .waitSeconds(.05)
+                .forward(24)
+                .waitSeconds(.05)
                 .turn(Math.toRadians(-45))
-                //.waitSeconds(.05)
-                //.forward(3)
-                //.waitSeconds(1)
+                .waitSeconds(.05)
+                .forward(4)
+                .waitSeconds(1)
                 .build();
 
         endTraj1 = drive.trajectorySequenceBuilder(traj1.end())
-                //.forward(-4)
-                .turn(Math.toRadians(45))
-                .forward(-24)
+                .forward(-4)
+                .turn(Math.toRadians(-45))
+                .strafeRight(20)
                 .build();
     }
 }
+
