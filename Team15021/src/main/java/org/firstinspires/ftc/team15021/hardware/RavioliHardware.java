@@ -80,7 +80,6 @@ public class RavioliHardware
         servo0 = hardwareMap.get(Servo.class, RavioliIds.SERVO_MOTOR_ZERO);
         servo1 = hardwareMap.get(Servo.class, RavioliIds.SERVO_MOTOR_ONE);
 
-        servo0.scaleRange(.4, 1);
         servo1.scaleRange(.45, .6);
 
         servo0.setDirection(Servo.Direction.REVERSE);
