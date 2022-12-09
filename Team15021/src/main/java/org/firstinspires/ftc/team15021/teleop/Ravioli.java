@@ -22,6 +22,7 @@ public class Ravioli extends OpMode
     ElapsedTime buttonTime = null;
     ElapsedTime buttonTime2 = null;
     ElapsedTime buttonTime3 = null;
+    ElapsedTime buttonTime4 = null;
 
 
 
@@ -36,6 +37,7 @@ public class Ravioli extends OpMode
         buttonTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         buttonTime2 = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         buttonTime3 = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        buttonTime4 = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
         telemetry.addData("Status", "Initialized");
@@ -49,9 +51,17 @@ public class Ravioli extends OpMode
     }
     public void loop()
     {
-        drive();
+        if(!flip1)
+            drive();
+        else
+            altdrive();
         moveArm();
         claw();
+        if(gamepad1.triangle&&buttonTime4.time()>250)
+        {
+            flip1 = !flip1;
+            buttonTime4.reset();
+        }
     }
 
     private void drive()
@@ -86,49 +96,90 @@ public class Ravioli extends OpMode
 
         if (gamepad1.dpad_up )
         {
-            leftFrontPower = .4;
-            rightRearPower = .4;
-            rightFrontPower = .4;
-            leftRearPower = .4;
+            leftFrontPower = .7;
+            rightRearPower = .7;
+            rightFrontPower = .7;
+            leftRearPower = .7;
         }
         else if (gamepad1.dpad_down)
         {
-            leftFrontPower = -.4;
-            rightRearPower = -.4;
-            rightFrontPower = -.4;
-            leftRearPower = -.4;
+            leftFrontPower = -.7;
+            rightRearPower = -.7;
+            rightFrontPower = -.7;
+            leftRearPower = -.7;
         }
         else if (gamepad1.dpad_right)
         {
-            leftFrontPower = .4;
-            rightRearPower = .4;
-            rightFrontPower = -.4;
-            leftRearPower = -.4;
+            leftFrontPower = .7;
+            rightRearPower = .7;
+            rightFrontPower = -.7;
+            leftRearPower = -.7;
         }
         else if (gamepad1.dpad_left)
         {
-            leftFrontPower = -.4;
-            rightRearPower = -.4;
-            rightFrontPower = .4;
-            leftRearPower = .4;
+            leftFrontPower = -.7;
+            rightRearPower = -.7;
+            rightFrontPower = .7;
+            leftRearPower = .7;
         }
 
 
         if (gamepad1.square && slowConstant == FAST_SPEED && buttonTime3.time() >= 500)
         {
             slowConstant = SLOW_SPEED;
-            buttonTime.reset();
+            buttonTime3.reset();
         }
         else if (gamepad1.square && slowConstant == SLOW_SPEED && buttonTime3.time() >= 500)
         {
             slowConstant = FAST_SPEED;
-            buttonTime.reset();
+            buttonTime3.reset();
         }
 
         hardware.leftFront.setPower(leftFrontPower * slowConstant);
         hardware.leftRear.setPower(leftRearPower * slowConstant);
         hardware.rightFront.setPower(rightFrontPower * slowConstant);
         hardware.rightRear.setPower(rightRearPower * slowConstant);
+
+    }
+    public void altdrive()
+    {
+        double leftFrontPower = 0;
+        double rightRearPower = 0;
+        double rightFrontPower = 0;
+        double leftRearPower = 0;
+        if(gamepad1.dpad_up)
+        {
+            leftFrontPower = .2;
+            rightRearPower = .2;
+            rightFrontPower = .2;
+            leftRearPower = .2;
+        }
+        if(gamepad1.dpad_down)
+        {
+            leftFrontPower = -.2;
+            rightRearPower = -.2;
+            rightFrontPower = -.2;
+            leftRearPower = -.2;
+        }
+        if(gamepad1.dpad_right)
+        {
+            leftFrontPower = .2;
+            rightRearPower = -.2;
+            rightFrontPower = -.2;
+            leftRearPower = .2;
+        }
+        if(gamepad1.dpad_left)
+        {
+            leftFrontPower = -.2;
+            rightRearPower = .2;
+            rightFrontPower = .2;
+            leftRearPower = -.2;
+        }
+        hardware.leftFront.setPower(leftFrontPower);
+        hardware.leftRear.setPower(leftRearPower);
+        hardware.rightFront.setPower(rightFrontPower);
+        hardware.rightRear.setPower(rightRearPower);
+
     }
 
     public void moveArm()
@@ -153,28 +204,31 @@ public class Ravioli extends OpMode
 
     public void claw()
     {
-        if (gamepad2.left_bumper&&!flip0&&buttonTime.time()>250)
+        if (gamepad2.right_bumper&&!flip0&&buttonTime.time()>250)
         {
-            hardware.servo0.setPosition(1);
+            hardware.servo1.setPosition(1);
             flip0 = true;
             buttonTime.reset();
         }
-        else if (gamepad2.left_bumper&&flip0&&buttonTime.time()>250)
+        else if (gamepad2.right_bumper&&flip0&&buttonTime.time()>250)
         {
-            hardware.servo0.setPosition(0);
+            hardware.servo1.setPosition(0);
             flip0 = false;
             buttonTime.reset();
         }
-        if (gamepad2.right_bumper&&!flip1&&buttonTime2.time()>250)
+        if (gamepad2.dpad_down&&buttonTime2.time()>250)
         {
-            hardware.servo1.setPosition(1);
-            flip1 = true;
+            hardware.servo0.setPosition(0);
             buttonTime2.reset();
         }
-        else if (gamepad2.right_bumper&&flip1&&buttonTime2.time()>250)
+        if (gamepad2.dpad_right&&buttonTime2.time()>250)
         {
-            hardware.servo1.setPosition(0);
-            flip1 = false;
+            hardware.servo0.setPosition(.5);
+            buttonTime2.reset();
+        }
+        if (gamepad2.dpad_up&&buttonTime2.time()>250)
+        {
+            hardware.servo0.setPosition(1);
             buttonTime2.reset();
         }
 

@@ -8,22 +8,19 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team15021.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.team15021.hardware.RavioliHardware;
-
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Config
-@Autonomous(name = "Left")
-public class Left extends LinearOpMode
+@Autonomous(name = "Alt")
+public class Alt extends LinearOpMode
 {
     SampleMecanumDrive drive;
 
     private Trajectory adjustment;
-    private Trajectory adjustment2;
     private Trajectory park1;
-    private Trajectory park2;
     private Trajectory park3;
 
     OpenCvInternalCamera webcam;
@@ -74,7 +71,7 @@ public class Left extends LinearOpMode
 
         waitForStart();
         if(!opModeIsActive()) {return;}
-        
+
         SignalPipeline.ans zone0 = pipeline.getAnalysis();
         int zone = 3;
         zone = signalToInt(zone0);
@@ -82,68 +79,19 @@ public class Left extends LinearOpMode
         if(zone==1)
         {
             drive.followTrajectory(adjustment);
-            drive.turn(Math.toRadians(-90));
-            drive.followTrajectory(adjustment2);
-            utilities.moveArm01(455);
-            utilities.wait(3000, telemetry);
-            utilities.moveArm2(373);
-            utilities.wait(5000, telemetry);
-            utilities.tiltUp();
-            drive.turn(Math.toRadians(79));
-            utilities.moveArm2(-50);
-            utilities.wait(1000, telemetry);
-            utilities.openClaw();
-            utilities.wait(1000, telemetry);
-            drive.turn(Math.toRadians(101));
-            utilities.moveArm2(-300);
-            utilities.wait(1000, telemetry);
-            utilities.moveArm01(-200);
-            utilities.wait(3000, telemetry);
+            drive.turn(Math.toRadians(90));
             drive.followTrajectory(park1);
         }
         if(zone==2)
         {
             drive.followTrajectory(adjustment);
-            drive.turn(Math.toRadians(-90));
-            drive.followTrajectory(adjustment2);
-            utilities.moveArm01(455);
-            utilities.wait(3000, telemetry);
-            utilities.moveArm2(373);
-            utilities.wait(5000, telemetry);
-            utilities.tiltUp();
-            drive.turn(Math.toRadians(79));
-            utilities.moveArm2(-50);
-            utilities.wait(1000, telemetry);
-            utilities.openClaw();
-            utilities.wait(1000, telemetry);
-            drive.turn(Math.toRadians(101));
-            utilities.moveArm2(-300);
-            utilities.wait(1000, telemetry);
-            utilities.moveArm01(-200);
-            utilities.wait(3000, telemetry);
-            drive.followTrajectory(park2);
         }
         if(zone==3)
         {
             drive.followTrajectory(adjustment);
             drive.turn(Math.toRadians(-90));
-            drive.followTrajectory(adjustment2);
-            utilities.moveArm01(455);
-            utilities.wait(3000, telemetry);
-            utilities.moveArm2(373);
-            utilities.wait(5000, telemetry);
-            utilities.tiltUp();
-            drive.turn(Math.toRadians(79));
-            utilities.moveArm2(-50);
-            utilities.wait(1000, telemetry);
-            utilities.openClaw();
-            utilities.wait(1000, telemetry);
-            drive.turn(Math.toRadians(101));
-            utilities.moveArm2(-300);
-            utilities.wait(1000, telemetry);
-            utilities.moveArm01(-200);
-            utilities.wait(3000, telemetry);
             drive.followTrajectory(park3);
+
         }
 
 
@@ -158,19 +106,13 @@ public class Left extends LinearOpMode
 
 
         adjustment = drive.trajectoryBuilder(drive.getPoseEstimate())
-                .forward(25.25).build();
+                .forward(48.5).build();
 
-        adjustment2 = drive.trajectoryBuilder(new Pose2d(25.25, 0, Math.toRadians(-90)))
-                .forward(25.5).build();
+        park1= drive.trajectoryBuilder(new Pose2d(50,0, Math.toRadians(90)))
+                .forward(24).build();
 
-        park1= drive.trajectoryBuilder(new Pose2d(25.25,-25.5, Math.toRadians(90)))
-                .forward(50.5).build();
-
-        park2= drive.trajectoryBuilder(new Pose2d(25.25,-25.5, Math.toRadians(90)))
-                .forward(27.5).build();
-
-        park3= drive.trajectoryBuilder(new Pose2d(25.25,-25.5, Math.toRadians(90)))
-                .forward(5).build();
+        park3= drive.trajectoryBuilder(new Pose2d(50,0, Math.toRadians(-90)))
+                .forward(24).build();
 
 
     }

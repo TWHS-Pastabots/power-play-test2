@@ -11,18 +11,18 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class SignalPipeline extends OpenCvPipeline
 {
 
-    private final Rect SIGNAL_ZONE = new Rect(176, 90, 40, 40);
+    private final Rect SIGNAL_ZONE = new Rect(176, 72, 5, 5);
 
     private boolean signalGreen;
     private boolean signalPurple;
     private boolean signalOrange;
     private volatile ans color;
 
-    int HELP;
+    int avg;
 
     Mat hsv = new Mat();
     Mat H = new Mat();
-    Mat donkey = new Mat();
+    Mat test = new Mat();
     public enum ans
     {
         GREEN,
@@ -43,17 +43,17 @@ public class SignalPipeline extends OpenCvPipeline
     public Mat processFrame(Mat input)
     {
         extractToHsv(input);
-        donkey = input.submat(SIGNAL_ZONE);
+        test = input.submat(SIGNAL_ZONE);
 
-        HELP = (int) Core.mean(donkey).val[0];
+        avg = (int) Core.mean(test).val[0];
         /*
         signalGreen = (50 < (int) Core.mean(donkey).val[0])&& ((int) Core.mean(donkey).val[0] < 70);
         signalPurple = (140 < (int) Core.mean(donkey).val[0])&& ((int) Core.mean(donkey).val[0] < 160);
         signalOrange = (10 < (int) Core.mean(donkey).val[0])&& ((int) Core.mean(donkey).val[0] < 20);
         */
-        signalGreen = (20 < (int) Core.mean(donkey).val[0])&& ((int) Core.mean(donkey).val[0] < 40);
-        signalPurple = (105 < (int) Core.mean(donkey).val[0])&& ((int) Core.mean(donkey).val[0] < 135);
-        signalOrange = (150 < (int) Core.mean(donkey).val[0])&& ((int) Core.mean(donkey).val[0] < 190);
+        signalGreen = (0 < (int) Core.mean(test).val[0])&& ((int) Core.mean(test).val[0] < 50);
+        signalPurple = (51 < (int) Core.mean(test).val[0])&& ((int) Core.mean(test).val[0] < 144.9);
+        signalOrange = (145 < (int) Core.mean(test).val[0])&& ((int) Core.mean(test).val[0] < 20000);
 
         if(signalGreen||signalPurple||signalOrange)
         {
@@ -69,7 +69,9 @@ public class SignalPipeline extends OpenCvPipeline
             Imgproc.rectangle(input, SIGNAL_ZONE, new Scalar(255, 255, 255), 5);
         }
         processSignalColor();
-
+        hsv.release();
+        H.release();
+        test.release();
         return input;
 
     }
