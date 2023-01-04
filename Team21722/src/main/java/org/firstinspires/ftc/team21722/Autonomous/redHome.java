@@ -10,6 +10,13 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.firstinspires.ftc.team21722.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.team21722.Hardware.MacaroniHardware;
 import org.firstinspires.ftc.team21722.trajectorysequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvInternalCamera;
+
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
+
 
 
 @Config
@@ -22,6 +29,9 @@ public class redHome extends LinearOpMode
     private Utilities utilities;
     private Object MacaroniHardware;
     private TrajectorySequence toHighJunction;
+
+OpenCvInternalCamera webcam;
+ColorDetection pipeline;
 
     @Override
     public void runOpMode() throws InterruptedException
