@@ -16,9 +16,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@Autonomous(name = "HighJunctionLeft")
+@Autonomous(name = "HJFarLeft")
 
-public class HighJunctionLeft extends LinearOpMode
+public class HJFarLeft extends LinearOpMode
 {
     private SampleMecanumDrive drive;
     private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
@@ -26,9 +26,9 @@ public class HighJunctionLeft extends LinearOpMode
 
     int liftPos1 = 378;
     int armPos1 = 330;
-    int armPosDrop = 240;
+    int armPosDrop = 270;
 
-    private TrajectorySequence trajStart, trajEndLeft, trajEndMiddle, trajEndRight;
+    private TrajectorySequence trajStart, trajMid, trajEndLeft, trajEndMiddle, trajEndRight;
 
     OpenCvInternalCamera webcam;
     ColorDetectionPipeline pipeline;
@@ -48,10 +48,10 @@ public class HighJunctionLeft extends LinearOpMode
         hardware.armMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         pipeline = new ColorDetectionPipeline();
+        pipeline.isRight = false;
         webcam.setPipeline(pipeline);
 
         webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
@@ -73,6 +73,8 @@ public class HighJunctionLeft extends LinearOpMode
             }
         });
 
+        hardware.armMotorOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
 
 //cyan 103, yellow 37, magenta 160
 
@@ -81,8 +83,6 @@ public class HighJunctionLeft extends LinearOpMode
         drive = new SampleMecanumDrive(hardwareMap);
 
         drive.setPoseEstimate(rightStart);
-
-        hardware.armMotorOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         while (!gamepad1.triangle)
         {
@@ -98,11 +98,9 @@ public class HighJunctionLeft extends LinearOpMode
 
         utilities.intake();
 
-
         waitForStart();
 
         hardware.armMotorOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
 
         if (!opModeIsActive())
@@ -112,7 +110,7 @@ public class HighJunctionLeft extends LinearOpMode
 
         //
         // Start of autonomous
-        //      Demi was here
+        //          Demi was here
         //
 
         utilities.moveLift(liftPos1);
@@ -127,51 +125,49 @@ public class HighJunctionLeft extends LinearOpMode
         utilities.moveArm(armPosDrop-armPos1);
         utilities.outtake();
         utilities.moveLift(-liftPos1);
-        utilities.moveArm(armPos1+armPosDrop);
-        utilities.moveArm(-550);
+        utilities.moveArm(armPos1-armPosDrop);
 
-        if (destination == "left")
+        drive.followTrajectorySequence(trajMid);
+
+        utilities.wait(500);
+        utilities.moveArm(-armPos1);
+
+        if (destination.equals("left"))
         {
             drive.followTrajectorySequence(trajEndLeft);
         }
-        else if (destination == "middle")
-        {
-            drive.followTrajectorySequence(trajEndMiddle);
-        }
-        else
+        else if(destination.equals("right"))
         {
             drive.followTrajectorySequence(trajEndRight);
         }
 
-        utilities.moveArm(-armPos1);
     }
 
     public void buildTrajectories()
     {
         trajStart = drive.trajectorySequenceBuilder(rightStart)
-                .forward(25)
-                .turn(Math.toRadians(-85))
-                .forward(23)
-                .turn(Math.toRadians(47))
-                .forward(4)
+                .forward(48)
+                .turn(Math.toRadians(48))
+                .turn(Math.toRadians(-90))
+                .forward(5)
                 .build();
 
-        trajEndRight = drive.trajectorySequenceBuilder(trajStart.end())
-                .back(2)
-                .waitSeconds(1)
-                .turn(Math.toRadians(-128))
+        trajMid = drive.trajectorySequenceBuilder((trajStart.end()))
+                .back(5)
+                .turn(Math.toRadians(43))
+                .back(22)
+                .turn(Math.toRadians(268))
                 .build();
 
-        trajEndMiddle = drive.trajectorySequenceBuilder(trajStart.end())
-                .back(2)
-                .turn(Math.toRadians(-47))
-                .back(24)
+        trajEndRight = drive.trajectorySequenceBuilder(trajMid.end())
+                .forward(22)
+                .turn(Math.toRadians(-90))
                 .build();
 
-        trajEndLeft = drive.trajectorySequenceBuilder(trajStart.end())
-                .back(1)
-                .turn(Math.toRadians((-48)))
-                .back(48)
+        //  trajEndMiddle (doesn't move :thumbsup: )
+
+        trajEndLeft = drive.trajectorySequenceBuilder(trajMid.end())
+                .back(25)
                 .build();
     }
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team16909.autonomous;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.team16909.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.team16909.hardware.FettucineHardware;
@@ -21,8 +22,8 @@ public class HighJunction extends LinearOpMode
     private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
     String destination;
 
-    int liftPos1 = 2000; //3897
-    int armPos1 = 330;
+    int liftPos1 = 378;
+    int armPos1 = 340;
     int armPosDrop = 240;
 
     private TrajectorySequence trajStart, trajEndLeft, trajEndMiddle, trajEndRight;
@@ -45,9 +46,11 @@ public class HighJunction extends LinearOpMode
         hardware.armMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         pipeline = new ColorDetectionPipeline();
+        pipeline.isRight = true;
         webcam.setPipeline(pipeline);
 
         webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
@@ -69,8 +72,8 @@ public class HighJunction extends LinearOpMode
             }
         });
 
+        hardware.armMotorOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-//cyan 103, yellow 37, magenta 160
 
         Utilities utilities = new Utilities(hardware);
 
@@ -95,6 +98,8 @@ public class HighJunction extends LinearOpMode
 
         waitForStart();
 
+        hardware.armMotorOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
 
         if (!opModeIsActive())
@@ -112,6 +117,7 @@ public class HighJunction extends LinearOpMode
         utilities.wait(300);
         destination = pipeline.getParkPoint();
 
+            // Driving to junction
         drive.followTrajectorySequence(trajStart);
 
         utilities.wait(500);
@@ -120,6 +126,7 @@ public class HighJunction extends LinearOpMode
         utilities.moveLift(-liftPos1);
         utilities.moveArm(armPos1-armPosDrop);
 
+            // Parking trajectories
         if (destination == "left")
         {
             drive.followTrajectorySequence(trajEndLeft);
@@ -139,29 +146,29 @@ public class HighJunction extends LinearOpMode
     public void buildTrajectories()
     {
         trajStart = drive.trajectorySequenceBuilder(rightStart)
-                .forward(25)
+                .forward(24)
                 .turn(Math.toRadians(90))
-                .forward(25)
-                .turn(Math.toRadians(-45))
-                .forward(2)
+                .forward(23)
+                .turn(Math.toRadians(-43))
+                .forward(4)
                 .build();
 
         trajEndLeft = drive.trajectorySequenceBuilder(trajStart.end())
-                .back(2)
+                .back(4)
                 .waitSeconds(1)
-                .turn(Math.toRadians(135))
+                .turn(Math.toRadians(138))
                 .build();
 
         trajEndMiddle = drive.trajectorySequenceBuilder(trajStart.end())
-                .back(2)
+                .back(4)
                 .turn(Math.toRadians(45))
-                .back(24)
+                .back(25)
                 .build();
 
         trajEndRight = drive.trajectorySequenceBuilder(trajStart.end())
-                .back(2)
-                .turn(Math.toRadians((45)))
-                .back(48)
+                .back(4)
+                .turn(Math.toRadians((42)))
+                .back(50)
                 .build();
     }
 }
