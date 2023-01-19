@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.team16909.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -21,7 +19,7 @@ import java.util.ArrayList;
 
 @Autonomous(name = "HJFarLeft")
 
-public class HJFarLeft extends LinearOpMode
+public class HJLeftFar extends LinearOpMode
 {
     private SampleMecanumDrive drive;
     private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
