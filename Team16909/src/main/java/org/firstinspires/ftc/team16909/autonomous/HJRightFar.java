@@ -19,17 +19,16 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "HJFarLeft")
+@Autonomous(name = "HJRightFar")
 
-public class HJFarLeft extends LinearOpMode
-{
+public class HJRightFar extends LinearOpMode {
     private SampleMecanumDrive drive;
     private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
     String destination;
 
     int liftPos1 = 378;
     int armPos1 = 330;
-    int armPosDrop = 270;
+    int armPosDrop = 290;
 
     private TrajectorySequence trajStart, trajMid, trajEndLeft, trajEndMiddle, trajEndRight;
 
@@ -58,8 +57,7 @@ public class HJFarLeft extends LinearOpMode
     AprilTagDetection tagOfInterest = null;
 
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
 
         FettucineHardware hardware = new FettucineHardware();
 
@@ -105,8 +103,7 @@ public class HJFarLeft extends LinearOpMode
         });
 
 
-        while (!isStarted())
-        {
+        while (!isStarted()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if (currentDetections.size() != 0) {
@@ -121,7 +118,7 @@ public class HJFarLeft extends LinearOpMode
                 }
 
                 if (tagFound) {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                    telemetry.addLine("Tag of interest is in sight! :pog:\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 } else {
                     telemetry.addLine("Don't see tag of interest :(");
@@ -178,7 +175,6 @@ public class HJFarLeft extends LinearOpMode
         hardware.armMotorOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-
         //
         // Start of autonomous
         //          Demi was here
@@ -192,10 +188,10 @@ public class HJFarLeft extends LinearOpMode
         drive.followTrajectorySequence(trajStart);
 
         utilities.wait(500);
-        utilities.moveArm(armPosDrop-armPos1);
+        utilities.moveArm(armPosDrop - armPos1);
         utilities.outtake();
         utilities.moveLift(-liftPos1);
-        utilities.moveArm(armPos1-armPosDrop);
+        utilities.moveArm(armPos1 - armPosDrop);
 
         drive.followTrajectorySequence(trajMid);
 
@@ -214,40 +210,40 @@ public class HJFarLeft extends LinearOpMode
 
     }
 
-    public void buildTrajectories()
-    {
+    public void buildTrajectories() {
         trajStart = drive.trajectorySequenceBuilder(rightStart)
                 .forward(48)
-                .turn(Math.toRadians(48))
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(-48))
+                .turn(Math.toRadians(90))
                 .forward(5)
                 .build();
 
         trajMid = drive.trajectorySequenceBuilder((trajStart.end()))
                 .back(5)
-                .turn(Math.toRadians(43))
+                .turn(Math.toRadians(-43))
                 .back(22)
-                .turn(Math.toRadians(268))
+                .turn(Math.toRadians(-268))
                 .build();
 
         trajEndRight = drive.trajectorySequenceBuilder(trajMid.end())
-                .forward(22)
-                .turn(Math.toRadians(-90))
+                .back(22)
                 .build();
 
-        //  trajEndMiddle (doesn't move :thumbsup: )
+        //  trajEndMiddle (literally doesn't move :thumbsup: )
+
+
 
         trajEndLeft = drive.trajectorySequenceBuilder(trajMid.end())
-                .back(25)
+                .forward(25)
+                .turn(Math.toRadians(90))
                 .build();
     }
 
-    void tagToTelemetry(AprilTagDetection detection)
-    {
+    void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.team16909.autonomous;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,28 +11,19 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.team16909.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.team16909.hardware.FettucineHardware;
 import org.firstinspires.ftc.team16909.trajectorysequence.TrajectorySequence;
-import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
+
+
+
+import org.openftc.apriltag.AprilTagDetection;
+
 import java.util.ArrayList;
-
-@Autonomous(name = "HJFarLeft")
-
-public class HJFarLeft extends LinearOpMode
-{
-    private SampleMecanumDrive drive;
-    private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
-    String destination;
-
-    int liftPos1 = 378;
-    int armPos1 = 330;
-    int armPosDrop = 270;
-
-    private TrajectorySequence trajStart, trajMid, trajEndLeft, trajEndMiddle, trajEndRight;
-
+@Autonomous(name = "HJLeftClose")
+public class HJLeftClose extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -57,10 +48,18 @@ public class HJFarLeft extends LinearOpMode
 
     AprilTagDetection tagOfInterest = null;
 
-    @Override
-    public void runOpMode() throws InterruptedException
-    {
+    private SampleMecanumDrive drive;
+    private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
+    String destination;
 
+    int liftPos1 = 378;
+    int armPos1 = 340;
+    int armPosDrop = 300;
+
+    private TrajectorySequence trajStart, trajEndLeft, trajEndMiddle, trajEndRight;
+
+
+    public void runOpMode() {
         FettucineHardware hardware = new FettucineHardware();
 
         hardware.init(hardwareMap);
@@ -70,22 +69,6 @@ public class HJFarLeft extends LinearOpMode
         hardware.rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         hardware.rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
         hardware.armMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
-
-
-        hardware.armMotorOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-
-//cyan 103, yellow 37, magenta 160
-
-        Utilities utilities = new Utilities(hardware);
-
-        drive = new SampleMecanumDrive(hardwareMap);
-
-        drive.setPoseEstimate(rightStart);
-
-        buildTrajectories();
-
-        utilities.intake();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
@@ -104,9 +87,18 @@ public class HJFarLeft extends LinearOpMode
             }
         });
 
+        Utilities utilities = new Utilities(hardware);
 
-        while (!isStarted())
-        {
+        drive = new SampleMecanumDrive(hardwareMap);
+
+        drive.setPoseEstimate(rightStart);
+
+        buildTrajectories();
+
+        utilities.intake();
+
+
+        while (!isStarted()) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if (currentDetections.size() != 0) {
@@ -174,33 +166,21 @@ public class HJFarLeft extends LinearOpMode
         // Start of autonomous
         //
 
-
-        hardware.armMotorOne.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-
-        //
-        // Start of autonomous
-        //          Demi was here
-        //
-
         utilities.moveLift(liftPos1);
         utilities.moveArm(armPos1);
 
         utilities.wait(300);
 
+        // Driving to junction
         drive.followTrajectorySequence(trajStart);
 
         utilities.wait(500);
-        utilities.moveArm(armPosDrop-armPos1);
+        utilities.moveArm(armPosDrop - armPos1);
         utilities.outtake();
         utilities.moveLift(-liftPos1);
-        utilities.moveArm(armPos1-armPosDrop);
+        utilities.moveArm(armPos1 - armPosDrop);
 
-        drive.followTrajectorySequence(trajMid);
-
-        utilities.wait(500);
-        utilities.moveArm(-armPos1);
+        // Parking trajectories
 
         if (tagOfInterest.id == LEFT) {
             drive.followTrajectorySequence(trajEndLeft);
@@ -209,36 +189,35 @@ public class HJFarLeft extends LinearOpMode
         } else {
             drive.followTrajectorySequence(trajEndRight);
         }
-
         utilities.moveArm(-armPos1);
-
     }
 
     public void buildTrajectories()
     {
         trajStart = drive.trajectorySequenceBuilder(rightStart)
-                .forward(48)
-                .turn(Math.toRadians(48))
-                .turn(Math.toRadians(-90))
-                .forward(5)
+                .forward(25)
+                .turn(Math.toRadians(-85))
+                .forward(23)
+                .turn(Math.toRadians(47))
+                .forward(4)
                 .build();
 
-        trajMid = drive.trajectorySequenceBuilder((trajStart.end()))
-                .back(5)
-                .turn(Math.toRadians(43))
-                .back(22)
-                .turn(Math.toRadians(268))
+        trajEndRight = drive.trajectorySequenceBuilder(trajStart.end())
+                .back(2)
+                .waitSeconds(1)
+                .turn(Math.toRadians(-128))
                 .build();
 
-        trajEndRight = drive.trajectorySequenceBuilder(trajMid.end())
-                .forward(22)
-                .turn(Math.toRadians(-90))
+        trajEndMiddle = drive.trajectorySequenceBuilder(trajStart.end())
+                .back(2)
+                .turn(Math.toRadians(-47))
+                .back(24)
                 .build();
 
-        //  trajEndMiddle (doesn't move :thumbsup: )
-
-        trajEndLeft = drive.trajectorySequenceBuilder(trajMid.end())
-                .back(25)
+        trajEndLeft = drive.trajectorySequenceBuilder(trajStart.end())
+                .back(1)
+                .turn(Math.toRadians((-48)))
+                .back(48)
                 .build();
     }
 
@@ -253,3 +232,4 @@ public class HJFarLeft extends LinearOpMode
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
+
