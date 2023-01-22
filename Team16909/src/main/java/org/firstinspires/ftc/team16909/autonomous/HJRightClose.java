@@ -1,41 +1,29 @@
-/*
- * Copyright (c) 2021 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.team16909.autonomous;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.team16909.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.team16909.hardware.FettucineHardware;
+import org.firstinspires.ftc.team16909.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-import java.util.ArrayList;
 
-@Autonomous (name = "autonInitDetection")
-public class AprilTagAutonomousInitDetection extends LinearOpMode
+
+
+import org.openftc.apriltag.AprilTagDetection;
+
+import java.util.ArrayList;
+@Autonomous(name = "HJRightClose")
+public class HJRightClose extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -61,9 +49,29 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
 
     AprilTagDetection tagOfInterest = null;
 
-    @Override
+    private SampleMecanumDrive drive;
+    private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
+    String destination;
+
+    int liftPos1 = 378;
+    int armPos1 = 340;
+    int armPosDrop = 300;
+
+    private TrajectorySequence trajStart, trajEndLeft, trajEndMiddle, trajEndRight;
+
+
     public void runOpMode()
     {
+        FettucineHardware hardware = new FettucineHardware();
+
+        hardware.init(hardwareMap);
+
+        hardware.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        hardware.leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        hardware.rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        hardware.rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
+        hardware.armMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -84,13 +92,18 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
             }
         });
 
-        telemetry.setMsTransmissionInterval(50);
+        Utilities utilities = new Utilities(hardware);
 
-        /*
-         * The INIT-loop:
-         * This REPLACES waitForStart!
-         */
-        while (!isStarted() && !isStopRequested())
+        drive = new SampleMecanumDrive(hardwareMap);
+
+        drive.setPoseEstimate(rightStart);
+
+        buildTrajectories();
+
+        utilities.intake();
+
+
+        while (!isStarted())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
@@ -167,22 +180,75 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
             telemetry.update();
         }
 
-        if (tagOfInterest == null || tagOfInterest.id == LEFT)
+
+        if (!opModeIsActive())
         {
-            //left trajectory
+            return;
+        }
+
+        //
+        // Start of autonomous
+        //
+
+        utilities.moveLift(liftPos1);
+        utilities.moveArm(armPos1);
+
+        utilities.wait(300);
+
+        // Driving to junction
+        drive.followTrajectorySequence(trajStart);
+
+        utilities.wait(500);
+        utilities.moveArm(armPosDrop-armPos1);
+        utilities.outtake();
+        utilities.moveLift(-liftPos1);
+        utilities.moveArm(armPos1-armPosDrop);
+
+        // Parking trajectories
+
+        if (tagOfInterest.id == LEFT)
+        {
+            drive.followTrajectorySequence(trajEndLeft);
         }
         else if (tagOfInterest.id == MIDDLE)
         {
-            //middle trajectory
+            drive.followTrajectorySequence(trajEndMiddle);
         }
         else
         {
-            //right trajectory
+            drive.followTrajectorySequence(trajEndRight);
         }
+        utilities.moveArm(-armPos1);
+    }
 
+    public void buildTrajectories()
+    {
+        trajStart = drive.trajectorySequenceBuilder(rightStart)
+                .forward(25)
+                .turn(Math.toRadians(90))
+                .forward(24
+                )
+                .turn(Math.toRadians(-43))
+                .forward(2)
+                .build();
 
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        //while (opModeIsActive()) {sleep(20);}
+        trajEndLeft = drive.trajectorySequenceBuilder(trajStart.end())
+                .back(2)
+                .waitSeconds(1)
+                .turn(Math.toRadians(138))
+                .build();
+
+        trajEndMiddle = drive.trajectorySequenceBuilder(trajStart.end())
+                .back(4)
+                .turn(Math.toRadians(45))
+                .back(25)
+                .build();
+
+        trajEndRight = drive.trajectorySequenceBuilder(trajStart.end())
+                .back(4)
+                .turn(Math.toRadians((42)))
+                .back(50)
+                .build();
     }
 
     void tagToTelemetry(AprilTagDetection detection)
@@ -195,4 +261,5 @@ public class AprilTagAutonomousInitDetection extends LinearOpMode
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
+
 }

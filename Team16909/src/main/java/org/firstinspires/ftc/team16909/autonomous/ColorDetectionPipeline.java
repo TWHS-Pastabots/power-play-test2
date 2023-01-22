@@ -10,10 +10,10 @@ import org.opencv.imgproc.Imgproc;
 
 public class ColorDetectionPipeline extends OpenCvPipeline
 {
-
-    int width = 25;
-    int height = 25;
-    Point TOP_LEFT_BOUND = new Point(180,60);
+    boolean isRight;
+    int width = 45;
+    int height = 45;
+    Point TOP_LEFT_BOUND = new Point(220,75 );
     Point BOTTOM_RIGHT_BOUND = new Point(TOP_LEFT_BOUND.x + width, TOP_LEFT_BOUND.y + height);
     Rect window = new Rect(TOP_LEFT_BOUND, BOTTOM_RIGHT_BOUND);
     public int meanCol;
@@ -68,6 +68,16 @@ public class ColorDetectionPipeline extends OpenCvPipeline
 
 
         Imgproc.rectangle(input, window, RGBCONVERSION[parkPoint], 5);
+
+        if (isRight)
+        {
+            Imgproc.rectangle(input, new Rect(75, 50, 5,100), new Scalar(0, 0, 0), 2);
+        }
+
+        else
+        {
+            Imgproc.rectangle(input, new Rect(75, 30, 5,100), new Scalar(0, 0, 0), 2);
+        }
 
 
         return input;

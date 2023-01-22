@@ -90,7 +90,7 @@ public class Utilities
     public void intake()
     {
         hardware.armServoTwo.setPower(-1);
-        this.wait(2000);
+        this.wait(1500);
         hardware.armServoTwo.setPower(0);
     }
 
