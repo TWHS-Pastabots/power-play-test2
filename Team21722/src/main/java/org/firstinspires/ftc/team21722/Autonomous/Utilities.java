@@ -25,9 +25,9 @@ public class Utilities
 
 
 
-    public void openClaw(){macaroniHardware.clawServo.setPosition(.10);}
+    public void closeClaw(){macaroniHardware.clawServo.setPosition(.10);}
 
-    public void closeClaw(){macaroniHardware.clawServo.setPosition(.70);}
+    public void openClaw(){macaroniHardware.clawServo.setPosition(2.80);}
 
 //    public void wait (int waitTime)
 //    {
@@ -50,4 +50,14 @@ public class Utilities
             telemetry.update();
         }
     }
+
+    public void wait(int waitTime)
+    {
+        ElapsedTime time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        time.reset();
+        while (time.time() < waitTime)
+        {
+        }
+    }
+
 }

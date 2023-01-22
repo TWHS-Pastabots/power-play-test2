@@ -112,9 +112,9 @@ public class Macaroni extends OpMode
     {
         double clawServoPosition = hardware.clawServo.getPosition();
         if (gamepad2.square)
-            hardware.clawServo.setPosition(.70);
-        if(gamepad2.circle)
             hardware.clawServo.setPosition(.10);
+        if(gamepad2.circle)
+            hardware.clawServo.setPosition(2.80);
     }
 
 

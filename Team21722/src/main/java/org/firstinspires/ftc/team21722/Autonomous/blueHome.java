@@ -10,6 +10,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.firstinspires.ftc.team21722.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.team21722.Hardware.MacaroniHardware;
 import org.firstinspires.ftc.team21722.trajectorysequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvInternalCamera;
+
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 
 
 @Config
@@ -21,7 +27,13 @@ public class blueHome extends LinearOpMode
     private Pose2d posHigh = new Pose2d(-10,-23,0 );
     private Utilities utilities;
     private Object MacaroniHardware;
-    private TrajectorySequence toHighJunction, scoot;
+    private TrajectorySequence toHighJunction, parkLeft, parkMiddle, parkRight;
+    String destination;
+
+    OpenCvInternalCamera webcam;
+    ColorDetection pipeline;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -35,12 +47,56 @@ public class blueHome extends LinearOpMode
         hardware.init(hardwareMap);
 
         utilities.openClaw();
+        //waitForStart();
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        pipeline = new ColorDetection();
+        webcam.setPipeline(pipeline);
+        destination = pipeline.getParkPoint();
+
+        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+                // This will be called if the camera could not be opened
+
+            }
+        });
+
+
+
+        utilities.wait(500,telemetry);
+        destination = pipeline.getParkPoint();
+
+        Utilities utilities = new Utilities(hardware);
+
+        drive = new SampleMecanumDrive(hardwareMap);
+        buildTrajectories();
+
         waitForStart();
 
         if(!opModeIsActive())
         {
             return;
         }
+
+
+
+        telemetry.addData("Hue Value: ", pipeline.meanCol);
+        telemetry.addData("Chosen Color: ", pipeline.getColor());
+        telemetry.addData("Park Point: ", pipeline.getParkPoint());
+        telemetry.update();
 
 
         utilities.closeClaw();
@@ -50,7 +106,20 @@ public class blueHome extends LinearOpMode
         utilities.openClaw();
         utilities.moveArm(1900);
         utilities.wait(6500,telemetry);
-        drive.followTrajectorySequence(scoot);
+
+
+        if(destination == "left")
+        {
+            drive.followTrajectorySequence(parkLeft);
+        }
+        else if(destination == "middle")
+        {
+            drive.followTrajectorySequence(parkMiddle);
+        }
+        else
+        {
+            drive.followTrajectorySequence(parkRight);
+        }
     }
 
     private void buildTrajectories()
@@ -58,10 +127,10 @@ public class blueHome extends LinearOpMode
         toHighJunction = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .forward(1)
                 .turn(Math.toRadians(90))
-                .forward(30)
+                .forward(11)
                 .waitSeconds(.10)
                 .turn(Math.toRadians(-90))
-                .forward(31.5)
+                .forward(25)
                 .turn(Math.toRadians(90))
                 .back(3)
                 .forward(1)
@@ -69,8 +138,20 @@ public class blueHome extends LinearOpMode
                 .forward(1.5)
                 .build();
 
-        scoot = drive.trajectorySequenceBuilder(toHighJunction.end())
-                .forward(0.75)
+
+
+
+        parkRight = drive.trajectorySequenceBuilder(toHighJunction.end())
+                .strafeLeft(10)
+                .back(20)
                 .build();
+        parkLeft = drive.trajectorySequenceBuilder(toHighJunction.end())
+                .strafeLeft(10)
+                .forward(17)
+                .build();
+        parkMiddle = drive.trajectorySequenceBuilder(toHighJunction.end())
+                .strafeLeft(10)
+                .build();
+
     }
 }

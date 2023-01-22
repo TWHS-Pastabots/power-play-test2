@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.firstinspires.ftc.team21722.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.team21722.Hardware.MacaroniHardware;
 import org.firstinspires.ftc.team21722.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.team21722.trajectorysequence.TrajectorySequenceBuilder;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import org.openftc.easyopencv.OpenCvCamera;
@@ -17,35 +18,36 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-
-
 @Config
-@Autonomous(name = "redHome")
-public class redHome extends LinearOpMode
+@Autonomous(name = "cameraPark")
+public class cameraPark extends LinearOpMode
 {
 
     SampleMecanumDrive drive;
     private Pose2d posHigh = new Pose2d(-10,-23.5,0 );
     private Utilities utilities;
+    private TrajectorySequence moveRight;
+    private TrajectorySequence moveLeft;
+    private TrajectorySequence turnLeft;
+    private TrajectorySequence inchForward;
     private Object MacaroniHardware;
-    private TrajectorySequence toHighJunction, adjust, parkLeft, parkRight, parkMid;
-
     OpenCvInternalCamera webcam;
     ColorDetection pipeline;
     String destination;
-
-
 
     @Override
     public void runOpMode() throws InterruptedException
     {
         drive= new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(-45, -65, 90));
         buildTrajectories();
 
         MacaroniHardware hardware = new MacaroniHardware();
         utilities = new Utilities(hardware);
         hardware.init(hardwareMap);
+
+        utilities.openClaw();
+
+
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
@@ -53,15 +55,14 @@ public class redHome extends LinearOpMode
         webcam.setPipeline(pipeline);
 
         webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-
 
         {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                webcam.startStreaming(320, 176, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                destination = pipeline.getParkPoint();
             }
 
             @Override
@@ -73,84 +74,67 @@ public class redHome extends LinearOpMode
             }
         });
 
-        utilities.openClaw();
         waitForStart();
         destination = pipeline.getParkPoint();
-
-        if (!opModeIsActive())
-        {
-            return;
-        }
-
-        utilities.closeClaw();
-        //utilities.wait(1000, telemetry);
-        //utilities.moveArm( -2000);
-        drive.followTrajectorySequence(toHighJunction);
-        utilities.moveArm( -2200);
-        utilities.wait(4500, telemetry);
-        drive.followTrajectorySequence(adjust);
-        utilities.openClaw();
-        utilities.wait(500,telemetry);
-        utilities.closeClaw();
-        utilities.moveArm(2200);
-        utilities.wait(1000,telemetry);
 
 
         if (destination == "right")
         {
-            drive.followTrajectorySequence(parkRight);
+            utilities.closeClaw();
+            telemetry.addData("yo", "the thing!");
+            telemetry.update();
+            drive.setMotorPowers(.25, .25, .25, .25);
+            utilities.wait(2350);
+            drive.setMotorPowers(0, 0, 0, 0);
+            drive.followTrajectorySequence(moveLeft);
+            drive.setMotorPowers(.4, .4, .4, .4);
+            utilities.wait(2150);
+            /*drive.followTrajectorySequence(turnLeft);
+            utilities.wait(1000);
+            drive.setMotorPowers(.2, .2, .2, .2);
+            utilities.wait(1000);
+            drive.setMotorPowers(0, 0, 0, 0);
+            telemetry.addData("completed!", "the thing!");
+            telemetry.update();*/
 
         }
         else if (destination == "left")
         {
-            drive.followTrajectorySequence(parkLeft);
-
+            utilities.closeClaw();
+            drive.setMotorPowers(.2, .2, .2, .2);
+            utilities.wait(2150, telemetry);
+            drive.setMotorPowers(0, 0, 0, 0);
+            drive.followTrajectorySequence(moveRight);
+            drive.setMotorPowers(.2, .2, .2, .2);
+            utilities.wait(2150, telemetry);
+            drive.setMotorPowers(0, 0, 0, 0);
         }
         else
-            drive.followTrajectorySequence(parkMid);
-
+            utilities.closeClaw();
+            drive.setMotorPowers(.2, .2, .2, .2);
+        utilities.wait(2500, telemetry);
+        drive.setMotorPowers(0, 0, 0, 0);
     }
 
-    private void buildTrajectories()
+    public void buildTrajectories()
     {
-        toHighJunction = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .turn(Math.toRadians(-90))
-                .forward(30)
-                .waitSeconds(.10)
-                .turn(Math.toRadians(90))
-                .forward(24)
-                .turn(Math.toRadians(-45))
-                //.back(2.5)
-                //.strafeLeft(14)
-               // .forward(.5)
+        /*inchForward = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .forward(8)
+                .waitSeconds(2)
+                .build();*/
+
+        moveLeft = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .turn(Math.toRadians(95))
+                //.forward(20)
                 .build();
 
-        adjust = drive.trajectorySequenceBuilder(toHighJunction.end())
-                .forward(5)
+        moveRight = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .turn(Math.toRadians(-95))
+                //.forward(12)
                 .build();
-
-    //teal
-        parkRight = drive.trajectorySequenceBuilder(adjust.end())
-                .back(5)
-                .turn(Math.toRadians(135))
-                .forward(55)
+        turnLeft = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .turn(Math.toRadians(-95))
                 .build();
-
-    //yellow
-        parkLeft = drive.trajectorySequenceBuilder(adjust.end())
-                .back(5)
-                .turn(Math.toRadians(-40))
-                .forward(15)
-                .build();
-
-    //pink
-        parkMid = drive.trajectorySequenceBuilder(adjust.end())
-                .back(5)
-                .turn(Math.toRadians(50))
-                .forward(15)
-                .build();
-
-
-
     }
 }
+

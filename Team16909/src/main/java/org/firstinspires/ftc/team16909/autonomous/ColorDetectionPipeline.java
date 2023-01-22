@@ -13,7 +13,7 @@ public class ColorDetectionPipeline extends OpenCvPipeline
 
     int width = 25;
     int height = 25;
-    Point TOP_LEFT_BOUND = new Point(240,80);
+    Point TOP_LEFT_BOUND = new Point(180,60);
     Point BOTTOM_RIGHT_BOUND = new Point(TOP_LEFT_BOUND.x + width, TOP_LEFT_BOUND.y + height);
     Rect window = new Rect(TOP_LEFT_BOUND, BOTTOM_RIGHT_BOUND);
     public int meanCol;
