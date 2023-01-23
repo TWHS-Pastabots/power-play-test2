@@ -19,15 +19,15 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 
 @Config
-@Autonomous(name = "blueHome")
-public class blueHome extends LinearOpMode
+@Autonomous(name = "mjBlue")
+public class mjBlue extends LinearOpMode
 {
 
     SampleMecanumDrive drive;
     private Pose2d posHigh = new Pose2d(-10,-23,0 );
     private Utilities utilities;
     private Object MacaroniHardware;
-    private TrajectorySequence toHighJunction, parkLeft, parkMiddle, parkRight, adjust;
+    private TrajectorySequence toMidJunc, parkLeft, parkMiddle, parkRight, adjust;
     String destination;
 
     OpenCvInternalCamera webcam;
@@ -89,14 +89,14 @@ public class blueHome extends LinearOpMode
 
 
         utilities.closeClaw();
-        drive.followTrajectorySequence(toHighJunction);
-        utilities.moveArm( -1400);
+        drive.followTrajectorySequence(toMidJunc);
+        utilities.moveArm( -1300);
         utilities.wait(3500, telemetry);
         drive.followTrajectorySequence(adjust);
         utilities.openClaw();
         utilities.wait(500,telemetry);
         utilities.closeClaw();
-        utilities.moveArm(1400);
+        utilities.moveArm(1300);
         utilities.wait(3500,telemetry);
 
 
@@ -114,20 +114,15 @@ public class blueHome extends LinearOpMode
             drive.followTrajectorySequence(parkMiddle);
     }
 
-
-
     private void buildTrajectories()
     {
-        toHighJunction = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .turn(Math.toRadians(90))
-                .forward(22)
-                .turn(Math.toRadians(-90))
-                .forward(24)
+        toMidJunc = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .forward(27)
                 .turn(Math.toRadians(45))
                 .build();
 
 
-        adjust = drive.trajectorySequenceBuilder(toHighJunction.end())
+        adjust = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .forward(5)
                 .build();
 
@@ -137,14 +132,14 @@ public class blueHome extends LinearOpMode
         parkRight = drive.trajectorySequenceBuilder(adjust.end())
                 .back(5)
                 .turn(Math.toRadians(45))
-                .forward(25)
+                .forward(23)
                 .build();
 
         //yellow
         parkLeft = drive.trajectorySequenceBuilder(adjust.end())
                 .back(5)
                 .turn(Math.toRadians(-135))
-                .forward(45)
+                .forward(25)
                 .build();
 
 
@@ -152,7 +147,7 @@ public class blueHome extends LinearOpMode
         parkMiddle = drive.trajectorySequenceBuilder(adjust.end())
                 .back(5)
                 .turn(Math.toRadians(-45))
-                .forward(12)
+                .forward(10)
                 .build();
 
     }
