@@ -11,9 +11,9 @@ import org.opencv.imgproc.Imgproc;
 public class ColorDetection extends OpenCvPipeline
 {
 
-    int width = 45;
+    int width = 25;
     int height = 25;
-    Point TOP_LEFT_BOUND = new Point(90,65);
+    Point TOP_LEFT_BOUND = new Point(150,95);
     Point BOTTOM_RIGHT_BOUND = new Point(TOP_LEFT_BOUND.x + width, TOP_LEFT_BOUND.y + height);
     Rect window = new Rect(TOP_LEFT_BOUND, BOTTOM_RIGHT_BOUND);
     public int meanCol;

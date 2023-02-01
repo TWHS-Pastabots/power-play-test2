@@ -90,13 +90,12 @@ public class blueHome extends LinearOpMode
 
         utilities.closeClaw();
         drive.followTrajectorySequence(toHighJunction);
-        utilities.moveArm( -1400);
+        utilities.moveArm( -1275);
         utilities.wait(3500, telemetry);
-        drive.followTrajectorySequence(adjust);
+        //drive.followTrajectorySequence(adjust);
         utilities.openClaw();
-        utilities.wait(500,telemetry);
-        utilities.closeClaw();
-        utilities.moveArm(1400);
+        //utilities.wait(500,telemetry);
+        utilities.moveArm(1275);
         utilities.wait(3500,telemetry);
 
 
@@ -120,28 +119,31 @@ public class blueHome extends LinearOpMode
     {
         toHighJunction = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .turn(Math.toRadians(90))
-                .forward(22)
+                .forward(14)
                 .turn(Math.toRadians(-90))
-                .forward(24)
+                .forward(13)
                 .turn(Math.toRadians(45))
+                .forward(7)
                 .build();
 
 
-        adjust = drive.trajectorySequenceBuilder(toHighJunction.end())
+       /* adjust = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .forward(5)
                 .build();
+
+        */
 
 
 
         //teal
-        parkRight = drive.trajectorySequenceBuilder(adjust.end())
+        parkRight = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(5)
                 .turn(Math.toRadians(45))
                 .forward(25)
                 .build();
 
         //yellow
-        parkLeft = drive.trajectorySequenceBuilder(adjust.end())
+        parkLeft = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(5)
                 .turn(Math.toRadians(-135))
                 .forward(45)
@@ -149,7 +151,7 @@ public class blueHome extends LinearOpMode
 
 
         //pink
-        parkMiddle = drive.trajectorySequenceBuilder(adjust.end())
+        parkMiddle = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(5)
                 .turn(Math.toRadians(-45))
                 .forward(12)

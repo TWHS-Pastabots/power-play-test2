@@ -82,17 +82,21 @@ public class redHome extends LinearOpMode
             return;
         }
 
+        telemetry.addData("code received", "yay");
+        telemetry.update();
         utilities.closeClaw();
         //utilities.wait(1000, telemetry);
         //utilities.moveArm( -2000);
         drive.followTrajectorySequence(toHighJunction);
-        utilities.moveArm( -2200);
+        utilities.moveArm( -1275);
         utilities.wait(4500, telemetry);
-        drive.followTrajectorySequence(adjust);
+        //drive.followTrajectorySequence(adjust);
+        utilities.wait(1000, telemetry);
         utilities.openClaw();
-        utilities.wait(500,telemetry);
-        utilities.closeClaw();
-        utilities.moveArm(2200);
+        //utilities.wait(500,telemetry);
+        //utilities.closeClaw();
+        utilities.wait(1000,telemetry);
+        utilities.moveArm(1275);
         utilities.wait(1000,telemetry);
 
 
@@ -119,34 +123,36 @@ public class redHome extends LinearOpMode
                 .waitSeconds(.10)
                 .turn(Math.toRadians(90))
                 .forward(24)
-                .turn(Math.toRadians(-45))
+                .turn(Math.toRadians(-41))
+                .forward(5.5)
                 //.back(2.5)
                 //.strafeLeft(14)
                // .forward(.5)
                 .build();
 
         adjust = drive.trajectorySequenceBuilder(toHighJunction.end())
-                .forward(5)
+                .forward(7)
                 .build();
 
     //teal
-        parkRight = drive.trajectorySequenceBuilder(adjust.end())
+        parkRight = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(5)
-                .turn(Math.toRadians(135))
+                .turn(Math.toRadians(132))
                 .forward(55)
+                .strafeLeft(2)
                 .build();
 
     //yellow
-        parkLeft = drive.trajectorySequenceBuilder(adjust.end())
-                .back(5)
-                .turn(Math.toRadians(-40))
-                .forward(15)
+        parkLeft = drive.trajectorySequenceBuilder(toHighJunction.end())
+                .back(7)
+                .turn(Math.toRadians(-51))
+                .forward(25)
                 .build();
 
     //pink
-        parkMid = drive.trajectorySequenceBuilder(adjust.end())
-                .back(5)
-                .turn(Math.toRadians(50))
+        parkMid = drive.trajectorySequenceBuilder(toHighJunction.end())
+                .back(7)
+                .turn(Math.toRadians(39))
                 .forward(15)
                 .build();
 

@@ -90,13 +90,13 @@ public class mjBlue extends LinearOpMode
 
         utilities.closeClaw();
         drive.followTrajectorySequence(toMidJunc);
-        utilities.moveArm( -1300);
+        utilities.moveArm( -1000);
         utilities.wait(3500, telemetry);
         drive.followTrajectorySequence(adjust);
         utilities.openClaw();
         utilities.wait(500,telemetry);
         utilities.closeClaw();
-        utilities.moveArm(1300);
+        utilities.moveArm(1000);
         utilities.wait(3500,telemetry);
 
 
@@ -117,37 +117,46 @@ public class mjBlue extends LinearOpMode
     private void buildTrajectories()
     {
         toMidJunc = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .forward(27)
+                .forward(47)
                 .turn(Math.toRadians(45))
-                .build();
-
-
-        adjust = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .forward(5)
                 .build();
 
 
+       /* adjust = drive.trajectorySequenceBuilder(toMidJunc.end())
+                .forward(5)
+                .build();
+
+        */
+
+
 
         //teal
-        parkRight = drive.trajectorySequenceBuilder(adjust.end())
+        parkRight = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .back(5)
                 .turn(Math.toRadians(45))
                 .forward(23)
                 .build();
 
+
+
+
         //yellow
-        parkLeft = drive.trajectorySequenceBuilder(adjust.end())
+        parkLeft = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .back(5)
                 .turn(Math.toRadians(-135))
                 .forward(25)
                 .build();
 
 
+
+
         //pink
-        parkMiddle = drive.trajectorySequenceBuilder(adjust.end())
+        parkMiddle = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .back(5)
                 .turn(Math.toRadians(-45))
-                .forward(10)
+                .back(3)
+                //.forward(10)
                 .build();
 
     }

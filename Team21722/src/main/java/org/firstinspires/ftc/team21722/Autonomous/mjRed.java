@@ -86,13 +86,12 @@ public class mjRed extends LinearOpMode
         //utilities.wait(1000, telemetry);
         //utilities.moveArm( -2000);
         drive.followTrajectorySequence(toMidJunc);
-        utilities.moveArm( -1500);
+        utilities.moveArm( -1000);
         utilities.wait(4500, telemetry);
         drive.followTrajectorySequence(adjust);
         utilities.openClaw();
-        utilities.wait(500,telemetry);
-        utilities.closeClaw();
-        utilities.moveArm(1500);
+        //utilities.wait(500,telemetry);
+        utilities.moveArm(1000);
         utilities.wait(1000,telemetry);
 
 
@@ -114,37 +113,45 @@ public class mjRed extends LinearOpMode
     private void buildTrajectories()
     {
         toMidJunc = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .forward(27)
+                .forward(47)
                 .waitSeconds(.10)
                 .turn(Math.toRadians(-50))
                 //.back(2.5)
                 //.strafeLeft(14)
-                // .forward(.5)
-                .build();
-
-        adjust = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .forward(5)
                 .build();
 
+       /* adjust = drive.trajectorySequenceBuilder(toMidJunc.end())
+                .forward(5)
+                .build();
+
+        */
+
+
         //teal
-        parkRight = drive.trajectorySequenceBuilder(adjust.end())
+        parkRight = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .back(5)
                 .turn(Math.toRadians(135))
                 .forward(28)
                 .build();
 
+
+
+
         //yellow
-        parkLeft = drive.trajectorySequenceBuilder(adjust.end())
+        parkLeft = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .back(5)
                 .turn(Math.toRadians(-45))
                 .forward(25)
                 .build();
 
+
+
         //pink
-        parkMid = drive.trajectorySequenceBuilder(adjust.end())
+        parkMid = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .back(5)
                 .turn(Math.toRadians(45))
-                .forward(10)
+                .back(5)
                 .build();
 
 
