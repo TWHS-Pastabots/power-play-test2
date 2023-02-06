@@ -11,11 +11,13 @@ public class Fettucine extends OpMode
 {
     // Initialization
     FettucineHardware hardware;
-    final double FAST_SPEED = .65;
-    final double SLOW_SPEED = .25;
+    final double FAST_SPEED = .8;
+    final double SLOW_SPEED = .35;
     double slowConstant = FAST_SPEED;
-    ElapsedTime armTime = null;
+    ElapsedTime grabTime = null;
     ElapsedTime buttonTime = null;
+    ElapsedTime grabButtonTime = null;
+    int buttonCounter = 0;
 
     public void init()
     {
@@ -23,6 +25,8 @@ public class Fettucine extends OpMode
         hardware = new FettucineHardware();
         hardware.init(hardwareMap);
         buttonTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        grabTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        grabButtonTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -140,28 +144,45 @@ public class Fettucine extends OpMode
     {
         if (gamepad2.triangle) //rotates grabber
         {
-            hardware.armServoOne.setPower(1);
+            hardware.armServoOne.setPower(-1);
+            hardware.armServoTwo.setPower(1);
         }
         else if (gamepad2.cross)
         {
-            hardware.armServoOne.setPower(-1); //sid was here
-        }
-        else
-        {
-            hardware.armServoOne.setPower(0.0);   //sid was here
-        }
-
-        if (gamepad2.right_bumper) //outtake
-        {
-            hardware.armServoTwo.setPower(1);
-        }
-        else if (gamepad2.left_bumper) //intake
-        {
+            hardware.armServoOne.setPower(1); //sid was here
             hardware.armServoTwo.setPower(-1);
         }
         else
         {
-            hardware.armServoTwo.setPower(0.0); // sid was here lolz
+            hardware.armServoOne.setPower(0.0);   //sid was here
+            hardware.armServoTwo.setPower(0.0);
+        }
+
+        if (gamepad2.right_bumper && buttonTime.time() >= 500) //manual intake + outtake
+        {
+            if (buttonCounter == 0)
+            {
+                buttonCounter = 1;
+            }
+            else
+            {
+                buttonCounter = 0;
+            }
+            hardware.grabberServo.setPosition(buttonCounter);
+            telemetry.addData("pos", buttonCounter);
+            buttonTime.reset();
+        }
+
+        if (gamepad2.left_bumper && grabButtonTime.time() >= 500)
+        {
+            grabButtonTime.reset();
+            hardware.grabberServo.setPosition(0);
+            grabTime.reset();
+            while (grabTime.time() < 250)
+            {
+                continue;
+            }
+            hardware.grabberServo.setPosition(1);
         }
 
         if(gamepad2.right_trigger > 0.0) //going from front to back (not purple to purple)

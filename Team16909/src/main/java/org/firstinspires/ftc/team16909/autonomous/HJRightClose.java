@@ -54,8 +54,8 @@ public class HJRightClose extends LinearOpMode
     String destination;
 
     int liftPos1 = 378;
-    int armPos1 = 340;
-    int armPosDrop = 300;
+    int armPos1 = 245;
+    int armPosDrop = 200;
 
     private TrajectorySequence trajStart, trajEndLeft, trajEndMiddle, trajEndRight;
 
@@ -201,6 +201,8 @@ public class HJRightClose extends LinearOpMode
         utilities.wait(500);
         utilities.moveArm(armPosDrop-armPos1);
         utilities.outtake();
+        utilities.wait(100);
+        utilities.intake();
         utilities.moveLift(-liftPos1);
         utilities.moveArm(armPos1-armPosDrop);
 
@@ -226,8 +228,7 @@ public class HJRightClose extends LinearOpMode
         trajStart = drive.trajectorySequenceBuilder(rightStart)
                 .forward(25)
                 .turn(Math.toRadians(90))
-                .forward(24
-                )
+                .forward(23.5)
                 .turn(Math.toRadians(-43))
                 .forward(2)
                 .build();
