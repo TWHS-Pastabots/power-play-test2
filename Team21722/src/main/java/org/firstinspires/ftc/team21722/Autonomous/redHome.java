@@ -73,6 +73,7 @@ public class redHome extends LinearOpMode
             }
         });
 
+
         utilities.openClaw();
         waitForStart();
         destination = pipeline.getParkPoint();
@@ -96,7 +97,7 @@ public class redHome extends LinearOpMode
         //utilities.wait(500,telemetry);
         //utilities.closeClaw();
         utilities.wait(1000,telemetry);
-        utilities.moveArm(1275);
+        utilities.moveArm(900);
         utilities.wait(1000,telemetry);
 
 
@@ -123,8 +124,8 @@ public class redHome extends LinearOpMode
                 .waitSeconds(.10)
                 .turn(Math.toRadians(90))
                 .forward(24)
-                .turn(Math.toRadians(-41))
-                .forward(5.5)
+                .turn(Math.toRadians(-43))
+                .forward(6.25)
                 //.back(2.5)
                 //.strafeLeft(14)
                // .forward(.5)
@@ -135,7 +136,7 @@ public class redHome extends LinearOpMode
                 .build();
 
     //teal
-        parkRight = drive.trajectorySequenceBuilder(toHighJunction.end())
+        parkLeft = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(5)
                 .turn(Math.toRadians(132))
                 .forward(55)
@@ -143,17 +144,17 @@ public class redHome extends LinearOpMode
                 .build();
 
     //yellow
-        parkLeft = drive.trajectorySequenceBuilder(toHighJunction.end())
+        parkRight = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(7)
-                .turn(Math.toRadians(-51))
-                .forward(25)
+                .turn(Math.toRadians(39))
+                .forward(15)
                 .build();
 
     //pink
         parkMid = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(7)
-                .turn(Math.toRadians(39))
-                .forward(15)
+                .turn(Math.toRadians(51))
+                .forward(25)
                 .build();
 
 

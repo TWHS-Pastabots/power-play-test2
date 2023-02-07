@@ -19,8 +19,8 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 
 @Config
-@Autonomous(name = "blueHome")
-public class blueHome extends LinearOpMode
+@Autonomous(name = "leftBlue")
+public class leftBlue extends LinearOpMode
 {
 
     SampleMecanumDrive drive;
@@ -138,24 +138,23 @@ public class blueHome extends LinearOpMode
         //teal
         parkRight = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(5)
-                .turn(Math.toRadians(-47))
-                .forward(10)
+                .turn(Math.toRadians(45))
+                .forward(25)
                 .build();
-
-        //yellow
-        parkLeft = drive.trajectorySequenceBuilder(toHighJunction.end())
-                .back(5)
-                .turn(Math.toRadians(-135))
-                .strafeLeft(3)
-                .forward(55)
-                .build();
-
 
         //pink
+        parkLeft = drive.trajectorySequenceBuilder(toHighJunction.end())
+                .back(5)
+                .turn(Math.toRadians(-92))
+                .forward(14)
+                .build();
+
+
+        //yellow
         parkMiddle = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(5)
                 .turn(Math.toRadians(-45))
-                .forward(15)
+                .forward(12)
                 .build();
 
     }
