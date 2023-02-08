@@ -17,6 +17,7 @@ public class RavioliHardware
     public DcMotorEx armMotor0 = null;
     public DcMotorEx armMotor1 = null;
     public DcMotorEx armMotor2 = null;
+    public DcMotorEx armMotor3 = null;
     public Servo servo0 = null;
     public Servo servo1 = null;
 
@@ -58,22 +59,27 @@ public class RavioliHardware
         armMotor0 = hardwareMap.get(DcMotorEx.class, RavioliIds.ARM_MOTOR_ZERO);
         armMotor1 = hardwareMap.get(DcMotorEx.class, RavioliIds.ARM_MOTOR_ONE);
         armMotor2 = hardwareMap.get(DcMotorEx.class, RavioliIds.ARM_MOTOR_TWO);
+        armMotor3 = hardwareMap.get(DcMotorEx.class, RavioliIds.ARM_MOTOR_THREE);
 
         armMotor0.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        armMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        armMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotor3.setDirection(DcMotorSimple.Direction.FORWARD);
 
         armMotor0.setPower(0.0);
         armMotor1.setPower(0.0);
         armMotor2.setPower(0.0);
+        armMotor3.setPower(0.0);
 
         armMotor0.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         armMotor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         armMotor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        armMotor3.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         armMotor0.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         armMotor1.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         armMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     private void initializeClawServos(HardwareMap hardwareMap)
     {

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.team15021.drive.SampleMecanumDrive;
@@ -13,6 +14,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
+@Disabled
 @Config
 @Autonomous(name = "Right")
 public class Right extends LinearOpMode
@@ -83,21 +85,21 @@ public class Right extends LinearOpMode
             drive.followTrajectory(adjustment);
             drive.turn(Math.toRadians(90));
             drive.followTrajectory(adjustment2);
-            utilities.moveArm01(455);
+            utilities.moveArm012(455);
             utilities.wait(3000, telemetry);
-            utilities.moveArm2(373);
+            utilities.moveArm3(373);
             utilities.wait(5000, telemetry);
             utilities.tiltUp();
             drive.turn(Math.toRadians(-41));
             utilities.wait(500, telemetry);
-            utilities.moveArm2(-50);
+            utilities.moveArm3(-50);
             utilities.wait(1000, telemetry);
             utilities.openClaw();
             utilities.wait(1000, telemetry);
             drive.turn(Math.toRadians(-139));
-            utilities.moveArm2(-300);
+            utilities.moveArm3(-300);
             utilities.wait(1000, telemetry);
-            utilities.moveArm01(-200);
+            utilities.moveArm012(-200);
             utilities.wait(3000, telemetry);
             drive.followTrajectory(park1);
         }
@@ -106,21 +108,21 @@ public class Right extends LinearOpMode
             drive.followTrajectory(adjustment);
             drive.turn(Math.toRadians(90));
             drive.followTrajectory(adjustment2);
-            utilities.moveArm01(455);
+            utilities.moveArm012(455);
             utilities.wait(3000, telemetry);
-            utilities.moveArm2(373);
+            utilities.moveArm3(373);
             utilities.wait(5000, telemetry);
             utilities.tiltUp();
             drive.turn(Math.toRadians(-41));
             utilities.wait(500, telemetry);
-            utilities.moveArm2(-50);
+            utilities.moveArm3(-50);
             utilities.wait(1000, telemetry);
             utilities.openClaw();
             utilities.wait(1000, telemetry);
             drive.turn(Math.toRadians(-139));
-            utilities.moveArm2(-300);
+            utilities.moveArm3(-300);
             utilities.wait(1000, telemetry);
-            utilities.moveArm01(-200);
+            utilities.moveArm012(-200);
             utilities.wait(3000, telemetry);
             drive.followTrajectory(park2);
         }
@@ -129,21 +131,21 @@ public class Right extends LinearOpMode
             drive.followTrajectory(adjustment);
             drive.turn(Math.toRadians(90));
             drive.followTrajectory(adjustment2);
-            utilities.moveArm01(455);
+            utilities.moveArm012(455);
             utilities.wait(3000, telemetry);
-            utilities.moveArm2(373);
+            utilities.moveArm3(373);
             utilities.wait(5000, telemetry);
             utilities.tiltUp();
             drive.turn(Math.toRadians(-41));
             utilities.wait(500, telemetry);
-            utilities.moveArm2(-50);
+            utilities.moveArm3(-50);
             utilities.wait(1000, telemetry);
             utilities.openClaw();
             utilities.wait(1000, telemetry);
             drive.turn(Math.toRadians(-139));
-            utilities.moveArm2(-300);
+            utilities.moveArm3(-300);
             utilities.wait(1000, telemetry);
-            utilities.moveArm01(-200);
+            utilities.moveArm012(-200);
             utilities.wait(3000, telemetry);
             drive.followTrajectory(park3);
         }
@@ -165,13 +167,13 @@ public class Right extends LinearOpMode
         adjustment2 = drive.trajectoryBuilder(new Pose2d(26.5, 0, Math.toRadians(90)))
                 .forward(25.75).build();
 
-        park3= drive.trajectoryBuilder(new Pose2d(26.5,25.75, Math.toRadians(-90)))
+        park3 = drive.trajectoryBuilder(new Pose2d(26.5,25.75, Math.toRadians(-90)))
                 .forward(50.5).build();
 
-        park2= drive.trajectoryBuilder(new Pose2d(26.5, 25.75, Math.toRadians(-90)))
+        park2 = drive.trajectoryBuilder(new Pose2d(26.5, 25.75, Math.toRadians(-90)))
                 .forward(27.5).build();
 
-        park1= drive.trajectoryBuilder(new Pose2d(26.5,25.75, Math.toRadians(-90)))
+        park1 = drive.trajectoryBuilder(new Pose2d(26.5,25.75, Math.toRadians(-90)))
                 .forward(5).build();
 
 

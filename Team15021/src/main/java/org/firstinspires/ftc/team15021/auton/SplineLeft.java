@@ -17,8 +17,8 @@ import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @Disabled
 @Config
-@Autonomous(name = "Left")
-public class Left extends LinearOpMode
+@Autonomous(name = "SplineLeft")
+public class SplineLeft extends LinearOpMode
 {
     SampleMecanumDrive drive;
 
@@ -27,6 +27,10 @@ public class Left extends LinearOpMode
     private Trajectory park1;
     private Trajectory park2;
     private Trajectory park3;
+
+    private Pose2d p0 = new Pose2d(5,54,Math.toRadians(180));
+    private Pose2d p1 = new Pose2d(0,54,Math.toRadians(45));
+    private Pose2d p2 = new Pose2d(-23,49,Math.toRadians(180));
 
     OpenCvInternalCamera webcam;
     SignalPipeline pipeline;
@@ -76,32 +80,36 @@ public class Left extends LinearOpMode
 
         waitForStart();
         if(!opModeIsActive()) {return;}
-        
+
         SignalPipeline.ans zone0 = pipeline.getAnalysis();
         int zone = 3;
         zone = signalToInt(zone0);
 
         if (zone == 1)
         {
+            // utilities.tiltNeutral();
             drive.followTrajectory(adjustment);
-            drive.turn(Math.toRadians(-90));
-            drive.followTrajectory(adjustment2);
+            // Extend Arm to pick up cone on wall
             utilities.moveArm012(455);
             utilities.wait(3000, telemetry);
-            utilities.moveArm3(420);
+            utilities.moveArm3(373);
             utilities.wait(5000, telemetry);
-            utilities.tiltUp();
-            drive.turn(Math.toRadians(79));
-            utilities.moveArm3(-50);
-            utilities.wait(1000, telemetry);
-            utilities.openClaw();
-            utilities.wait(1000, telemetry);
-            drive.turn(Math.toRadians(101));
-            utilities.moveArm3(-300);
-            utilities.wait(1000, telemetry);
-            utilities.moveArm012(-200);
+            // Drive slightly forward if needed (using wall to help pick up cone)
+            utilities.closeClaw();
+            // Raise Arm and Drive very slightly backwards (if needed)
+            // Rotate & Adjust for high or medium junction beside robot
+            drive.followTrajectory(adjustment2);
+            // Arm & Claw Stuff
+            utilities.moveArm012(455);
             utilities.wait(3000, telemetry);
-            drive.followTrajectory(park1);
+            utilities.moveArm3(373);
+            utilities.wait(5000, telemetry);
+            utilities.openClaw();
+            utilities.moveArm012(455);
+            utilities.wait(3000, telemetry);
+            utilities.moveArm3(373);
+            utilities.wait(5000, telemetry);
+            drive.followTrajectory(park1); // TODO make park1
         }
         if (zone == 2)
         {
@@ -110,7 +118,7 @@ public class Left extends LinearOpMode
             drive.followTrajectory(adjustment2);
             utilities.moveArm012(455);
             utilities.wait(3000, telemetry);
-            utilities.moveArm3(420);
+            utilities.moveArm3(373);
             utilities.wait(5000, telemetry);
             utilities.tiltUp();
             drive.turn(Math.toRadians(79));
@@ -132,7 +140,7 @@ public class Left extends LinearOpMode
             drive.followTrajectory(adjustment2);
             utilities.moveArm012(455);
             utilities.wait(3000, telemetry);
-            utilities.moveArm3(420);
+            utilities.moveArm3(373);
             utilities.wait(5000, telemetry);
             utilities.tiltUp();
             drive.turn(Math.toRadians(79));
@@ -160,18 +168,19 @@ public class Left extends LinearOpMode
 
 
         adjustment = drive.trajectoryBuilder(drive.getPoseEstimate())
-                .forward(23.25).build();
+                .splineToLinearHeading(p0, Math.toRadians(45)).build();
 
-        adjustment2 = drive.trajectoryBuilder(new Pose2d(23.25, 0, Math.toRadians(-90)))
-                .forward(25.5).build();
 
-        park1= drive.trajectoryBuilder(new Pose2d(23.25,-25.5, Math.toRadians(90)))
-                .forward(50.5).build();
+        adjustment2 = drive.trajectoryBuilder(adjustment.end())
+                .splineToLinearHeading(p1, Math.toRadians(180)).build();
 
-        park2= drive.trajectoryBuilder(new Pose2d(23.25,-25.5, Math.toRadians(90)))
+        park1= drive.trajectoryBuilder(adjustment2.end())
+                .splineToLinearHeading(p2, Math.toRadians(180)).build();
+
+        park2= drive.trajectoryBuilder(new Pose2d(25.25,-25.5, Math.toRadians(90)))
                 .forward(27.5).build();
 
-        park3= drive.trajectoryBuilder(new Pose2d(23.25,-25.5, Math.toRadians(90)))
+        park3= drive.trajectoryBuilder(new Pose2d(25.25,-25.5, Math.toRadians(90)))
                 .forward(5).build();
 
 

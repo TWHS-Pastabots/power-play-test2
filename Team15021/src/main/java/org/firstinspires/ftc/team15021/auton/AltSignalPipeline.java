@@ -8,7 +8,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class SignalPipeline extends OpenCvPipeline
+public class AltSignalPipeline extends OpenCvPipeline
 {
 
     private final Rect SIGNAL_ZONE = new Rect(176, 72, 5, 5);

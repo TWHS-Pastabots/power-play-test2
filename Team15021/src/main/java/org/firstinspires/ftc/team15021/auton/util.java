@@ -18,54 +18,34 @@ public class util
         this.ravioliHardware = ravioliHardware;
     }
 
-   /* public void moveArm01(int position)
-    {
-
-        ravioliHardware.armMotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ravioliHardware.armMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        while(!(position-5< ravioliHardware.armMotor0.getCurrentPosition() &&
-                ravioliHardware.armMotor1.getCurrentPosition()< position+5))
-        {
-            if(position<ravioliHardware.armMotor0.getCurrentPosition())
-            {
-                ravioliHardware.armMotor0.setPower(-.25);
-                ravioliHardware.armMotor1.setPower(-.25);
-            }
-            if(position>ravioliHardware.armMotor0.getCurrentPosition())
-            {
-                ravioliHardware.armMotor0.setPower(.25);
-                ravioliHardware.armMotor1.setPower(.25);
-            }
-        }
-        ravioliHardware.armMotor0.setPower(0);
-        ravioliHardware.armMotor1.setPower(0);
-
-    }*/
-    public void moveArm01(int position)
+    public void moveArm012(int position)
     {
         ravioliHardware.armMotor0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ravioliHardware.armMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ravioliHardware.armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         ravioliHardware.armMotor0.setTargetPosition(ravioliHardware.armMotor0.getCurrentPosition()+position);
         ravioliHardware.armMotor1.setTargetPosition(ravioliHardware.armMotor1.getCurrentPosition()+position);
+        ravioliHardware.armMotor2.setTargetPosition(ravioliHardware.armMotor2.getCurrentPosition()+position);
 
         ravioliHardware.armMotor0.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         ravioliHardware.armMotor1.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        ravioliHardware.armMotor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         ravioliHardware.armMotor0.setPower(1);
         ravioliHardware.armMotor1.setPower(1);
+        ravioliHardware.armMotor2.setPower(1);
 
     }
-    public void moveArm2(int position)
+    public void moveArm3(int position)
     {
-        ravioliHardware.armMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ravioliHardware.armMotor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        ravioliHardware.armMotor2.setTargetPosition(ravioliHardware.armMotor2.getCurrentPosition()+position);
+        ravioliHardware.armMotor3.setTargetPosition(ravioliHardware.armMotor3.getCurrentPosition()+position);
 
-        ravioliHardware.armMotor2.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        ravioliHardware.armMotor3.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        ravioliHardware.armMotor2.setPower(.5);
+        ravioliHardware.armMotor3.setPower(.7);
 
     }
 
@@ -88,7 +68,9 @@ public class util
 
     public void tiltDown() { ravioliHardware.servo0.setPosition(1); }
 
-    public void tiltUp() { ravioliHardware.servo0.setPosition(.4); }
+    public void tiltMid() { ravioliHardware.servo0.setPosition(.5); }
+
+    public void tiltUp() { ravioliHardware.servo0.setPosition(0); }
 
     public void resetClaw() {ravioliHardware.servo0.scaleRange(0,1);}
 

@@ -187,19 +187,30 @@ public class Ravioli extends OpMode
         hardware.armMotor0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.armMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hardware.armMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.armMotor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         hardware.armMotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hardware.armMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hardware.armMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.armMotor3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            if(gamepad2.left_trigger>.1)
+            {
+                hardware.armMotor0.setPower(-gamepad2.left_trigger*.8);
+                hardware.armMotor1.setPower(-gamepad2.left_trigger*.8);
+                hardware.armMotor2.setPower(-gamepad2.left_trigger*.8);
+            }
+            else
+            {
+                hardware.armMotor0.setPower(gamepad2.right_trigger*.8);
+                hardware.armMotor1.setPower(gamepad2.right_trigger*.8);
+                hardware.armMotor2.setPower(gamepad2.right_trigger*.8);
+            }
 
 
-        hardware.armMotor0.setPower(gamepad2.right_trigger);
-        hardware.armMotor1.setPower(gamepad2.right_trigger);
 
-        hardware.armMotor0.setPower(-gamepad2.left_trigger);
-        hardware.armMotor1.setPower(-gamepad2.left_trigger);
-
-        hardware.armMotor2.setPower(gamepad2.left_stick_y*.5);
+        hardware.armMotor3.setPower(gamepad2.left_stick_y*.7);
     }
 
     public void claw()
