@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team16909.autonomous;
+package org.firstinspires.ftc.team21722.Autonomous;
 
 import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -8,22 +8,22 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class ColorDetectionPipeline extends OpenCvPipeline
+public class ColorDetection extends OpenCvPipeline
 {
-    boolean isRight;
+
     int width = 25;
-    int height = 45;
-    Point TOP_LEFT_BOUND = new Point(280,125 );
+    int height = 25;
+    Point TOP_LEFT_BOUND = new Point(150,95);
     Point BOTTOM_RIGHT_BOUND = new Point(TOP_LEFT_BOUND.x + width, TOP_LEFT_BOUND.y + height);
     Rect window = new Rect(TOP_LEFT_BOUND, BOTTOM_RIGHT_BOUND);
     public int meanCol;
     int [] colDistances = new int[3];
-    int yellow = 37; //(60, 100%, 50%) #de9bf3
-    int magenta = 160; //(300, 100%, 50%) #104613
-    int cyan = 103; //(180, 100%, 50%) #dbf0f0
-    int[] cols = {yellow, magenta, cyan};
+    int yellow = 38; //(60, 100%, 50%) #de9bf3
+    int pink = 160; //(300, 100%, 50%) #104613
+    int teal = 90; //(180, 100%, 50%) #dbf0f0
+    int[] cols = {yellow, pink, teal};
     String[] locations = {"left", "middle", "right"};
-    String[] colors = {"yellow", "magenta", "cyan"};
+    String[] colors = {"yellow", "pink", "teal"};
     Scalar[] RGBCONVERSION = {new Scalar(255, 255, 0), new Scalar(255, 0, 255), new Scalar(0, 255, 255)};
     Mat submat = new Mat();
     Mat hsv = new Mat();
@@ -68,16 +68,6 @@ public class ColorDetectionPipeline extends OpenCvPipeline
 
 
         Imgproc.rectangle(input, window, RGBCONVERSION[parkPoint], 5);
-
-        if (isRight)
-        {
-            Imgproc.rectangle(input, new Rect(75, 50, 5,100), new Scalar(0, 0, 0), 2);
-        }
-
-        else
-        {
-            Imgproc.rectangle(input, new Rect(75, 30, 5,100), new Scalar(0, 0, 0), 2);
-        }
 
 
         return input;

@@ -19,11 +19,13 @@ public class HighJunction extends LinearOpMode
 {
     private SampleMecanumDrive drive;
     private Pose2d rightStart = new Pose2d(-36, 64, Math.toRadians(-90));
+    String destination;
 
     int liftPos1 = 2000; //3897
-    int armPos1 = 300;
+    int armPos1 = 330;
+    int armPosDrop = 240;
 
-    private TrajectorySequence traj1, finalTraj, endTraj1, endTraj2, endTraj3;
+    private TrajectorySequence trajStart, trajEndLeft, trajEndMiddle, trajEndRight;
 
     OpenCvInternalCamera webcam;
     ColorDetectionPipeline pipeline;
@@ -43,7 +45,7 @@ public class HighJunction extends LinearOpMode
         hardware.armMotorOne.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-        /*int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         pipeline = new ColorDetectionPipeline();
         webcam.setPipeline(pipeline);
@@ -65,10 +67,12 @@ public class HighJunction extends LinearOpMode
                  // This will be called if the camera could not be opened
 
             }
-        });*/
+        });
 
 
 
+
+//cyan 103, yellow 37, magenta 160
 
         Utilities utilities = new Utilities(hardware);
 
@@ -76,7 +80,7 @@ public class HighJunction extends LinearOpMode
 
         drive.setPoseEstimate(rightStart);
 
-        /*while (!gamepad1.triangle)
+        while (!gamepad1.triangle)
         {
             telemetry.addData("Hue Value: ", pipeline.meanCol);
             telemetry.addData("Chosen Color: ", pipeline.getColor());
@@ -84,7 +88,7 @@ public class HighJunction extends LinearOpMode
             telemetry.update();
             utilities.wait(100);
             telemetry.clear();
-        }*/
+        }
 
         buildTrajectories();
 
@@ -93,46 +97,73 @@ public class HighJunction extends LinearOpMode
 
         waitForStart();
 
+
+
         if (!opModeIsActive())
         {
             return;
         }
 
-        //utilities.wait(500);
+        //
+        // Start of autonomous
+        //
 
         utilities.moveLift(liftPos1);
         utilities.moveArm(armPos1);
 
+        utilities.wait(300);
+        destination = pipeline.getParkPoint();
 
-        drive.followTrajectorySequence(traj1);
+        drive.followTrajectorySequence(trajStart);
 
+        utilities.wait(500);
+        utilities.moveArm(armPosDrop-armPos1);
         utilities.outtake();
         utilities.moveLift(-liftPos1);
+        utilities.moveArm(armPos1-armPosDrop);
 
-        drive.followTrajectorySequence(endTraj1);
+        if (destination == "left")
+        {
+            drive.followTrajectorySequence(trajEndLeft);
+        }
+        else if (destination == "middle")
+        {
+            drive.followTrajectorySequence(trajEndMiddle);
+        }
+        else
+        {
+            drive.followTrajectorySequence(trajEndRight);
+        }
 
         utilities.moveArm(-armPos1);
     }
 
     public void buildTrajectories()
     {
-        traj1 = drive.trajectorySequenceBuilder(rightStart)
-                .forward(27)
-                //.waitSeconds(.05)
-                .turn(Math.toRadians(95))
-                //.waitSeconds(.05)
+        trajStart = drive.trajectorySequenceBuilder(rightStart)
                 .forward(25)
-                //.waitSeconds(.05)
+                .turn(Math.toRadians(90))
+                .forward(25)
                 .turn(Math.toRadians(-45))
-                //.waitSeconds(.05)
-                //.forward(3)
-                //.waitSeconds(1)
+                .forward(2)
                 .build();
 
-        endTraj1 = drive.trajectorySequenceBuilder(traj1.end())
-                //.forward(-4)
+        trajEndLeft = drive.trajectorySequenceBuilder(trajStart.end())
+                .back(2)
+                .waitSeconds(1)
+                .turn(Math.toRadians(135))
+                .build();
+
+        trajEndMiddle = drive.trajectorySequenceBuilder(trajStart.end())
+                .back(2)
                 .turn(Math.toRadians(45))
-                .forward(-24)
+                .back(24)
+                .build();
+
+        trajEndRight = drive.trajectorySequenceBuilder(trajStart.end())
+                .back(2)
+                .turn(Math.toRadians((45)))
+                .back(48)
                 .build();
     }
 }

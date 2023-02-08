@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team16909.drive;
+package org.firstinspires.ftc.team21722.drive;
 
 import androidx.annotation.NonNull;
 
@@ -27,26 +27,26 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.team16909.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.team16909.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.team16909.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.team16909.util.LynxModuleUtil;
+import org.firstinspires.ftc.team21722.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.team21722.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.team21722.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.team21722.util.LynxModuleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.team16909.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.team21722.drive.DriveConstants.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -56,7 +56,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.213890467;
+    public static double LATERAL_MULTIPLIER = 1.0790;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -122,11 +122,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (DcMotorEx motor : motors) {
@@ -146,6 +141,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
@@ -304,7 +302,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return (double) imu.getAngularVelocity().xRotationRate;
+        return (double) imu.getAngularVelocity().zRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

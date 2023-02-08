@@ -11,4 +11,5 @@ public class FettucineIds
     public static final String ARM_MOTOR_ONE = "armMotorOne";
     public static final String ARM_SERVO_ONE = "armServoOne";
     public static final String ARM_SERVO_TWO = "armServoTwo";
+    public static final String GRABBER_SERVO = "grabberServo";
 }

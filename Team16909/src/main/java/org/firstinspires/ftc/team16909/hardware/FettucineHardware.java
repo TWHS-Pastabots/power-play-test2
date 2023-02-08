@@ -19,6 +19,7 @@ public class FettucineHardware
     public DcMotorEx armMotorOne = null;
     public CRServo armServoOne = null;
     public CRServo armServoTwo = null;
+    public Servo grabberServo = null;
     public DcMotorEx[] driveMotors;
     public DcMotorEx[] liftMotors;
 
@@ -79,6 +80,8 @@ public class FettucineHardware
 
         armServoOne = hardwareMap.get(CRServo.class, FettucineIds.ARM_SERVO_ONE);
         armServoTwo = hardwareMap.get(CRServo.class, FettucineIds.ARM_SERVO_TWO);
+
+        grabberServo = hardwareMap.get(Servo.class, FettucineIds.GRABBER_SERVO);
 
         armServoOne.resetDeviceConfigurationForOpMode();
         armServoTwo.resetDeviceConfigurationForOpMode();
