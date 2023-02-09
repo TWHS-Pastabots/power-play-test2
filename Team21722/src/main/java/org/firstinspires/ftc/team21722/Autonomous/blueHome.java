@@ -123,7 +123,7 @@ public class blueHome extends LinearOpMode
                 .turn(Math.toRadians(-90))
                 .forward(25)
                 .turn(Math.toRadians(47))
-                .forward(7.25)
+                .forward(7.75)
                 .build();
 
 

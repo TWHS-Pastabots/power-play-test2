@@ -124,8 +124,8 @@ public class redHome extends LinearOpMode
                 .waitSeconds(.10)
                 .turn(Math.toRadians(90))
                 .forward(24)
-                .turn(Math.toRadians(-43))
-                .forward(6.25)
+                .turn(Math.toRadians(-41.5))
+                .forward(6.1)
                 //.back(2.5)
                 //.strafeLeft(14)
                // .forward(.5)
@@ -135,25 +135,25 @@ public class redHome extends LinearOpMode
                 .forward(7)
                 .build();
 
-    //teal
+    //yellow
         parkLeft = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(5)
-                .turn(Math.toRadians(132))
-                .forward(55)
+                .turn(Math.toRadians(39))
+                .forward(15)
                 .strafeLeft(2)
                 .build();
 
-    //yellow
+    //teal
         parkRight = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(7)
-                .turn(Math.toRadians(39))
-                .forward(15)
+                .turn(Math.toRadians(132))
+                .forward(55)
                 .build();
 
     //pink
         parkMid = drive.trajectorySequenceBuilder(toHighJunction.end())
                 .back(7)
-                .turn(Math.toRadians(51))
+                .turn(Math.toRadians(40))
                 .forward(25)
                 .build();
 
