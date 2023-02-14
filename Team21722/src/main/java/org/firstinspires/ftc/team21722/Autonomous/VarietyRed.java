@@ -77,25 +77,27 @@ public class VarietyRed extends LinearOpMode
         }
 
         utilities.closeClaw();
+        utilities.wait(500,telemetry);
+        utilities.moveArm( -975);
         drive.followTrajectorySequence(toMidJunc);
-        utilities.moveArm( -900);
-        utilities.wait(1000, telemetry);
-        drive.followTrajectorySequence(adjust);
+        //utilities.moveArm( -900);
+        utilities.wait(1200, telemetry);
+        //drive.followTrajectorySequence(adjust);
         utilities.openClaw();
         //6 seconds first score
 
         utilities.wait(500,telemetry);
-        utilities.moveArm(900);
+        utilities.moveArm(775);
         drive.followTrajectorySequence(toConeStackM);
         utilities.wait(2000,telemetry);//time seconds
         utilities.closeClaw();
         //obtained 1st cone at 9-10 seconds
 
         utilities.wait(500);
-        utilities.moveArm(-1000);
+        utilities.moveArm(-150);
         drive.followTrajectorySequence(toSmallJunc);
         utilities.wait(2000);//time
-        drive.followTrajectorySequence(adjust);
+        //drive.followTrajectorySequence(adjust);
         utilities.openClaw();
         //Score 2nd cone at around 12-15 seconds
 
@@ -135,19 +137,19 @@ public class VarietyRed extends LinearOpMode
     private void buildTrajectories()
     {
         toMidJunc = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .forward(27)
+                .forward(15)
                 //waitSeconds(.10)
-                .turn(Math.toRadians(50))
-                .forward(3)
+                .turn(Math.toRadians(-52))
+                .forward(3.6)
                 //.strafeLeft(14)
                 // .forward(.5)
                 .build();
 
 
-        toConeStackM = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        toConeStackM = drive.trajectorySequenceBuilder(toMidJunc.end())
                 .back(5)
-                .turn(Math.toRadians(-50))
-                .forward(15)
+                .turn(Math.toRadians(50))
+                .forward(18)
                 .turn(Math.toRadians(90))
                 .forward(20)
                 .build();
@@ -159,18 +161,18 @@ public class VarietyRed extends LinearOpMode
         //        .build();
 
 
-        toSmallJunc = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        toSmallJunc = drive.trajectorySequenceBuilder(toConeStackM.end())
                 .back(10)
                 .turn(Math.toRadians(90))
                 .build();
 
-        toConeStackS = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        toConeStackS = drive.trajectorySequenceBuilder(toSmallJunc.end())
                 .back(5)
                 .turn(Math.toRadians(-90))
                 .forward(10)
                 .build();
 
-        toHighJunc = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+        toHighJunc = drive.trajectorySequenceBuilder(toConeStackS.end())
                 .back(30)
                 .turn(Math.toRadians(-90))
                 .build();
